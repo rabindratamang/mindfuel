@@ -11,8 +11,7 @@ frontend/.turbo/
 
 # Backend (FastAPI, Python, ChromaDB)
 backend/.env
-backend/.env.*
-backend/__pycache__/
+backend/**/__pycache__/
 backend/.venv/
 backend/env/
 backend/ENV/

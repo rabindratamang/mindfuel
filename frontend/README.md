@@ -28,6 +28,7 @@ This is the frontend for **MindFuel – AI Mental Health Companion**, built with
 ```bash
 cd frontend
 npm install
+npm i --legacy-peer-deps # if there is dependency issue, we will resolve it later
 # or
 pnpm install
 ```

@@ -28,6 +28,11 @@ backend/
 │   ├── __init__.py
 │   ├── agent.py
 │   └── user.py
+|
+├── tools/
+│   ├── __init__.py
+│   ├── youtube_tools.py
+│   └── ... (other tools)
 │
 ├── main.py                # FastAPI app entrypoint
 ├── requirements.txt

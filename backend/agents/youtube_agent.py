@@ -19,7 +19,7 @@ class YoutubeAgent:
             name="youtube_assistant"
         )
 
-    def run(self, user_input):
+    def run(self, user_input, user_id=None, context=None):
         response = self.agent.invoke({
             "messages": [HumanMessage(content=user_input)]
         }, config={"recursion_limit": 50})

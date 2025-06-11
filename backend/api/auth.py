@@ -7,22 +7,22 @@ router = APIRouter()
 fake_users_db = {}
 
 @router.post("/register")
-def register(user: User):
-    if user.username in fake_users_db:
+def register(register_data: User):
+    if register_data.username in fake_users_db:
         raise HTTPException(status_code=400, detail="Username already exists")
-    fake_users_db[user.username] = {
-        "username": user.username,
-        "hashed_password": hash_password(user.password)
+    fake_users_db[register_data.username] = {
+        "username": register_data.username,
+        "hashed_password": hash_password(register_data.password)
     }
     return {"msg": "User registered"}
 
 @router.post("/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = fake_users_db.get(form_data.username)
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
+def login(login_data: User):
+    db_user = fake_users_db.get(login_data.username)
+    if not db_user or not verify_password(login_data.password, db_user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    access_token = create_access_token({"sub": form_data.username})
-    refresh_token = create_refresh_token({"sub": form_data.username})
+    access_token = create_access_token({"sub": db_user["username"]})
+    refresh_token = create_refresh_token({"sub": db_user["username"]})
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,

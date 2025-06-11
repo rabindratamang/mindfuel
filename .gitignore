@@ -9,6 +9,14 @@ frontend/.env.*
 frontend/out/
 frontend/.turbo/
 
+
+frontend-no-auth-ref/node_modules/
+frontend-no-auth-ref/.next/
+frontend-no-auth-ref/.env
+frontend-no-auth-ref/.env.*
+frontend-no-auth-ref/out/
+frontend-no-auth-ref/.turbo/
+
 # Backend (FastAPI, Python, ChromaDB)
 backend/.env
 backend/**/__pycache__/

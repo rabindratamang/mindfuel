@@ -13,31 +13,32 @@ import { motion } from "framer-motion"
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <motion.div
-        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome back, John</h1>
-          <p className="text-slate-500 dark:text-slate-400">Here's an overview of your mental wellness journey</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Welcome back, John</h1>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400">
+            Here's an overview of your mental wellness journey
+          </p>
         </div>
-        <Button className="bg-gradient-to-r from-teal-500 to-sky-500">Check-in Now</Button>
+        <Button className="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-sky-500">Check-in Now</Button>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <AnimatedCard delay={0}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Mood Trend</CardTitle>
             <AnimatedIcon icon={Brain} hoverEffect="pulse" color="#14b8a6" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Positive</div>
+            <div className="text-xl sm:text-2xl font-bold">Positive</div>
             <p className="text-xs text-slate-500 dark:text-slate-400">+5% from last week</p>
             <div className="mt-4 h-[60px]">
-              {/* Placeholder for chart */}
               <div className="flex items-end justify-between h-full gap-1">
                 {[40, 30, 60, 70, 50, 75, 80].map((value, i) => (
                   <motion.div
@@ -61,7 +62,7 @@ export default function DashboardPage() {
             <AnimatedIcon icon={Calendar} hoverEffect="bounce" color="#0ea5e9" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">7 Days</div>
+            <div className="text-xl sm:text-2xl font-bold">7 Days</div>
             <p className="text-xs text-slate-500 dark:text-slate-400">Your longest streak: 14 days</p>
             <div className="mt-4 grid grid-cols-7 gap-1">
               {Array.from({ length: 7 }).map((_, i) => (
@@ -80,13 +81,13 @@ export default function DashboardPage() {
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard delay={2}>
+        <AnimatedCard delay={2} className="sm:col-span-2 lg:col-span-1">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Sleep Quality</CardTitle>
             <AnimatedIcon icon={Clock} hoverEffect="glow" color="#818cf8" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Good</div>
+            <div className="text-xl sm:text-2xl font-bold">Good</div>
             <p className="text-xs text-slate-500 dark:text-slate-400">7.5 hours on average</p>
             <div className="mt-4">
               <div className="flex items-center justify-between mb-1 text-xs">
@@ -101,24 +102,32 @@ export default function DashboardPage() {
         </AnimatedCard>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="xl:col-span-2">
           <Tabs defaultValue="mood">
-            <div className="flex items-center justify-between mb-4">
-              <TabsList>
-                <TabsTrigger value="mood">Mood</TabsTrigger>
-                <TabsTrigger value="meditation">Meditation</TabsTrigger>
-                <TabsTrigger value="sleep">Sleep</TabsTrigger>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
+              <TabsList className="w-full sm:w-auto">
+                <TabsTrigger value="mood" className="flex-1 sm:flex-none">
+                  Mood
+                </TabsTrigger>
+                <TabsTrigger value="meditation" className="flex-1 sm:flex-none">
+                  Meditation
+                </TabsTrigger>
+                <TabsTrigger value="sleep" className="flex-1 sm:flex-none">
+                  Sleep
+                </TabsTrigger>
               </TabsList>
-              <Button variant="ghost" size="sm" className="gap-1 text-slate-500 dark:text-slate-400">
+              <Button variant="ghost" size="sm" className="gap-1 text-slate-500 dark:text-slate-400 w-full sm:w-auto">
                 View All <ArrowUpRight className="h-3 w-3" />
               </Button>
             </div>
             <TabsContent value="mood" className="m-0">
               <AnimatedCard>
                 <CardHeader>
-                  <CardTitle>Mood Analysis</CardTitle>
-                  <CardDescription>How are you feeling today? Let AI analyze your mood.</CardDescription>
+                  <CardTitle className="text-lg sm:text-xl">Mood Analysis</CardTitle>
+                  <CardDescription className="text-sm">
+                    How are you feeling today? Let AI analyze your mood and provide personalized suggestions
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <MoodAnalyzer />
@@ -128,20 +137,24 @@ export default function DashboardPage() {
             <TabsContent value="meditation" className="m-0">
               <AnimatedCard>
                 <CardHeader>
-                  <CardTitle>Meditation Sessions</CardTitle>
-                  <CardDescription>Your recent meditation sessions and recommendations.</CardDescription>
+                  <CardTitle className="text-lg sm:text-xl">Meditation Sessions</CardTitle>
+                  <CardDescription className="text-sm">
+                    Your recent meditation sessions and recommendations.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <motion.div
                         className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg"
                         whileHover={{ y: -5 }}
                         transition={{ type: "spring", stiffness: 300, damping: 15 }}
                       >
                         <div className="text-sm font-medium mb-2">Last Session</div>
-                        <div className="text-lg font-semibold">Mindful Breathing</div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">10 minutes • Yesterday</div>
+                        <div className="text-base sm:text-lg font-semibold">Mindful Breathing</div>
+                        <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                          10 minutes • Yesterday
+                        </div>
                       </motion.div>
                       <motion.div
                         className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg"
@@ -149,8 +162,8 @@ export default function DashboardPage() {
                         transition={{ type: "spring", stiffness: 300, damping: 15 }}
                       >
                         <div className="text-sm font-medium mb-2">Total Time</div>
-                        <div className="text-lg font-semibold">3.5 hours</div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">This month</div>
+                        <div className="text-base sm:text-lg font-semibold">3.5 hours</div>
+                        <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">This month</div>
                       </motion.div>
                     </div>
                     <Button className="w-full bg-gradient-to-r from-teal-500 to-sky-500">Start New Session</Button>
@@ -161,8 +174,8 @@ export default function DashboardPage() {
             <TabsContent value="sleep" className="m-0">
               <AnimatedCard>
                 <CardHeader>
-                  <CardTitle>Sleep Insights</CardTitle>
-                  <CardDescription>Your sleep patterns and recommendations.</CardDescription>
+                  <CardTitle className="text-lg sm:text-xl">Sleep Insights</CardTitle>
+                  <CardDescription className="text-sm">Your sleep patterns and recommendations.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -173,7 +186,7 @@ export default function DashboardPage() {
                     >
                       <div className="flex justify-between items-center mb-2">
                         <div className="text-sm font-medium">Last Night</div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">7.5 hours</div>
+                        <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">7.5 hours</div>
                       </div>
                       <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                         <motion.div
@@ -195,9 +208,9 @@ export default function DashboardPage() {
             </TabsContent>
           </Tabs>
         </div>
-        <div>
+        <div className="space-y-4">
           <motion.h3
-            className="text-lg font-semibold mb-4"
+            className="text-base sm:text-lg font-semibold"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}

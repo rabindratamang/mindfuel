@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"

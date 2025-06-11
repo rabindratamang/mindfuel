@@ -43,14 +43,12 @@ export function DataTable<T>({
     direction: "asc" | "desc" | null
   }>({ key: null, direction: null })
 
-  // Handle search
   const handleSearch = (value: string) => {
     setSearchValue(value)
     setCurrentPage(1)
     onSearch?.(value)
   }
 
-  // Handle sorting
   const handleSort = (key: keyof T) => {
     let direction: "asc" | "desc" | null = "asc"
 
@@ -65,7 +63,6 @@ export function DataTable<T>({
     setSortConfig({ key, direction })
   }
 
-  // Sort data
   const sortedData = React.useMemo(() => {
     if (!sortConfig.key || !sortConfig.direction) return data
 
@@ -83,7 +80,6 @@ export function DataTable<T>({
     })
   }, [data, sortConfig])
 
-  // Pagination
   const totalPages = pagination ? Math.ceil(sortedData.length / pageSize) : 1
   const paginatedData = pagination ? sortedData.slice((currentPage - 1) * pageSize, currentPage * pageSize) : sortedData
 
@@ -91,18 +87,21 @@ export function DataTable<T>({
     <div className={cn("space-y-4", className)}>
       {searchable && (
         <div className="flex justify-end">
-          <SearchBar placeholder={searchPlaceholder} onChange={handleSearch} className="w-full md:w-64" />
+          <SearchBar placeholder={searchPlaceholder} onChange={handleSearch} className="w-full sm:w-64 md:w-80" />
         </div>
       )}
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
               {columns.map((column, index) => (
                 <TableHead
                   key={index}
-                  className={cn(column.sortable ? "cursor-pointer select-none" : "", "whitespace-nowrap")}
+                  className={cn(
+                    column.sortable ? "cursor-pointer select-none" : "",
+                    "whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4",
+                  )}
                   onClick={() => column.sortable && handleSort(column.accessorKey)}
                 >
                   <div className="flex items-center space-x-1">
@@ -138,7 +137,7 @@ export function DataTable<T>({
                   className="border-b transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 >
                   {columns.map((column, colIndex) => (
-                    <TableCell key={colIndex}>
+                    <TableCell key={colIndex} className="text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">
                       {column.cell ? column.cell(row) : (row[column.accessorKey] as React.ReactNode)}
                     </TableCell>
                   ))}
@@ -146,7 +145,7 @@ export function DataTable<T>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center text-sm">
                   No results found.
                 </TableCell>
               </TableRow>
@@ -156,36 +155,54 @@ export function DataTable<T>({
       </div>
 
       {pagination && totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-slate-500 dark:text-slate-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center sm:text-left">
             Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, sortedData.length)} of{" "}
             {sortedData.length} entries
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 overflow-x-auto">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
+              className="text-xs sm:text-sm"
             >
               Previous
             </Button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentPage(page)}
-                className={cn("w-9", currentPage === page ? "bg-teal-500 hover:bg-teal-600" : "")}
-              >
-                {page}
-              </Button>
-            ))}
+            <div className="flex space-x-1">
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let page = i + 1
+                if (totalPages > 5) {
+                  if (currentPage > 3) {
+                    page = currentPage - 2 + i
+                  }
+                  if (currentPage > totalPages - 2) {
+                    page = totalPages - 4 + i
+                  }
+                }
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className={cn(
+                      "w-8 h-8 text-xs sm:text-sm",
+                      currentPage === page ? "bg-teal-500 hover:bg-teal-600" : "",
+                    )}
+                  >
+                    {page}
+                  </Button>
+                )
+              })}
+            </div>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
+              className="text-xs sm:text-sm"
             >
               Next
             </Button>

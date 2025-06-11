@@ -19,7 +19,6 @@ export function AnimatedInput({ label, error, icon, className, ...props }: Anima
 
   useEffect(() => {
     setMounted(true)
-    // Check initial value after mount
     if (props.value || props.defaultValue) {
       setHasValue(true)
     }
@@ -32,16 +31,20 @@ export function AnimatedInput({ label, error, icon, className, ...props }: Anima
 
   const isLabelFloating = isFocused || hasValue
 
-  // Static fallback for SSR
   const StaticInput = () => (
     <div className={cn("relative", className)}>
       <div className="relative">
-        {icon && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{icon}</div>}
+        {icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm sm:text-base">
+            {icon}
+          </div>
+        )}
         <input
           className={cn(
-            "w-full rounded-lg border border-border bg-background px-3 py-3 text-sm",
+            "w-full rounded-lg border border-border bg-background px-3 py-2 sm:py-3 text-sm sm:text-base",
             "focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20",
-            icon ? "pl-10" : "pl-3",
+            "h-12 sm:h-14",
+            icon ? "pl-9 sm:pl-10" : "pl-3",
             error && "border-red-500",
           )}
           placeholder={label}
@@ -52,34 +55,45 @@ export function AnimatedInput({ label, error, icon, className, ...props }: Anima
     </div>
   )
 
+  // Remove placeholder from props to avoid conflicts with floating label
+  const { placeholder, ...inputProps } = props
+
   return (
     <ClientOnly fallback={<StaticInput />}>
       <div className={cn("relative", className)}>
         <div className="relative">
-          {icon && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{icon}</div>}
+          {icon && (
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm sm:text-base">
+              {icon}
+            </div>
+          )}
 
           <input
             className={cn(
-              "peer w-full rounded-lg border border-border bg-background px-3 py-3 text-sm transition-all duration-200",
+              "peer w-full rounded-lg border border-border bg-background px-3 text-sm sm:text-base transition-all duration-200",
               "focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20",
               "disabled:cursor-not-allowed disabled:opacity-50",
-              icon ? "pl-10" : "pl-3",
+              isLabelFloating ? "pt-6 pb-2" : "py-2 sm:py-3",
+              "h-12 sm:h-14",
+              icon ? "pl-9 sm:pl-10" : "pl-3",
               error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
             )}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             onChange={handleChange}
-            {...props}
+            // Only show placeholder when label is floating and input is focused but empty
+            placeholder={isLabelFloating && isFocused && !hasValue ? placeholder : ""}
+            {...inputProps}
           />
 
           {mounted && (
             <motion.label
               className={cn(
-                "absolute text-sm text-muted-foreground transition-all duration-200 pointer-events-none",
-                icon ? "left-10" : "left-3",
+                "absolute text-muted-foreground transition-all duration-200 pointer-events-none",
+                icon ? "left-9 sm:left-10" : "left-3",
               )}
               animate={{
-                top: isLabelFloating ? "0.5rem" : "50%",
+                top: isLabelFloating ? "0.375rem" : "50%",
                 fontSize: isLabelFloating ? "0.75rem" : "0.875rem",
                 y: isLabelFloating ? 0 : "-50%",
               }}

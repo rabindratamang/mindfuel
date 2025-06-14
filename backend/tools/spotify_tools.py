@@ -1,7 +1,7 @@
 import os
 import requests
 from langchain_core.tools import tool
-from config.setting import CLIENT_ID, CLIENT_SECRET
+from config.setting import settings
 from typing import List
 
 
@@ -27,8 +27,8 @@ def search_spotify_playlists(query: str) -> str:
     """
 
     # Replace with your actual credentials (or store securely)
-    client_id = CLIENT_ID
-    client_secret = CLIENT_SECRET
+    client_id = settings.CLIENT_ID
+    client_secret = settings.CLIENT_SECRET
 
     try:
         token = get_spotify_token(client_id, client_secret)

@@ -1,7 +1,7 @@
 from langchain.tools import tool
 from typing import List
 import requests
-from config.setting import SENDGRID_API_KEY
+from config.setting import settings
 import sendgrid
 import os
 from sendgrid.helpers.mail import Mail, Email, To, Content
@@ -28,7 +28,7 @@ def send_email_via_sendgrid(
         dict: A dictionary with status_code and response_headers.
     """
     #os.environ.get("SENDGRID_API_KEY")
-    sg = sendgrid.SendGridAPIClient(api_key=os.environ.get("SENDGRID_API_KEY"))
+    sg = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
 
     from_email = Email(sender_email)
     to_email = To(recipient_email)

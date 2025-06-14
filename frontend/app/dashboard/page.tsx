@@ -10,8 +10,12 @@ import { RecommendationCard } from "@/components/recommendation-card"
 import { AnimatedCard } from "@/components/animated-card"
 import { AnimatedIcon } from "@/components/animated-icon"
 import { motion } from "framer-motion"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function DashboardPage() {
+
+  const { user, logout } = useAuth()
+  
   return (
     <div className="space-y-4 sm:space-y-6">
       <motion.div
@@ -21,7 +25,7 @@ export default function DashboardPage() {
         transition={{ duration: 0.5 }}
       >
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Welcome back, John</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Welcome back, {user?.firstName}</h1>
           <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400">
             Here's an overview of your mental wellness journey
           </p>

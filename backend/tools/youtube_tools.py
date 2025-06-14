@@ -1,14 +1,14 @@
 import os
 import requests
 from langchain_core.tools import tool
-from config.setting import RAPIDAPI_KEY
+from config.setting import settings
 
 @tool
 def search_youtube_video(query: str, region: str = "US", language: str = "en") -> str:
     """
     Search for a video on YouTube using the RapidAPI YouTube138 API.
     """
-    rapidapi_key = RAPIDAPI_KEY
+    rapidapi_key = settings.RAPIDAPI_KEY
     url = "https://youtube138.p.rapidapi.com/search/"
     params = {"q": query, "hl": language, "gl": region}
     headers = {

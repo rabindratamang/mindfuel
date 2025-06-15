@@ -1,7 +1,7 @@
 from langchain_core.tools import tool
 import requests
 import os
-from config.setting import RAPIDAPI_KEY
+from config.setting import settings
 @tool
 def search_news_by_keyword(keyword: str, region: str = "en-US") -> str:
     """
@@ -14,7 +14,7 @@ def search_news_by_keyword(keyword: str, region: str = "en-US") -> str:
     Returns:
         str: A summary of the top 3 news articles with title, summary, and link.
     """
-    rapidapi_key = RAPIDAPI_KEY
+    rapidapi_key = settings.RAPIDAPI_KEY
     url = "https://google-news13.p.rapidapi.com/search"
     querystring = {"keyword": keyword, "lr": region}
     headers = {

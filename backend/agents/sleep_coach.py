@@ -2,10 +2,10 @@ import os
 from langchain_openai import OpenAI
 from langchain_core.prompts import PromptTemplate
 from core.chroma import get_collection
-
+from config.setting import settings
 class SleepCoachAgent:
     def __init__(self):
-        self.llm = OpenAI(openai_api_key=os.getenv("OPENAI_API_KEY"))
+        self.llm = OpenAI(openai_api_key=settings.OPENAI_API_KEY, model="gpt-4o-mini")
         self.prompt = PromptTemplate(
             template="You are a sleep coach. Give personalized wind-down routines and sleep tips. Context: {context}\nInput: {input}",
             input_variables=["context", "input"]
@@ -14,8 +14,9 @@ class SleepCoachAgent:
         self.collection = get_collection("sleep_coach")
 
     def run(self, user_input, user_id=None, context=None):
-        results = self.collection.query(query_texts=[user_input], n_results=3)
-        context_str = "\n".join([doc for doc in results.get("documents", [[]])[0]])
+        # results = self.collection.query(query_texts=[user_input], n_results=3)
+        # context_str = "\n".join([doc for doc in results.get("documents", [[]])[0]])
+        context_str = ""
         prompt_vars = {
             "context": context_str,
             "input": user_input

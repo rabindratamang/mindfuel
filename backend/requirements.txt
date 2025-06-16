@@ -167,3 +167,4 @@ zipp==3.23.0
 zstandard==0.23.0
 sendgrid
 googletrans
+email_validator==2.2.0

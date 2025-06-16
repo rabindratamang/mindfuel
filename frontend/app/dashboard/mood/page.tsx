@@ -1,8 +1,21 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MoodAnalyzer } from "@/components/mood-analyzer"
+import { ContentRecommendations } from "@/components/content-recommendations"
+import { useState } from "react"
 
 export default function MoodPage() {
+  // This would come from the MoodAnalyzer component in a real implementation
+  const [currentMood, setCurrentMood] = useState<string | null>(null)
+  const [moodScore, setMoodScore] = useState<number>(0)
+
+  const handleMoodAnalyzed = (mood: string, score: number) => {
+    setCurrentMood(mood)
+    setMoodScore(score)
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -12,20 +25,20 @@ export default function MoodPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle>How are you feeling?</CardTitle>
               <CardDescription>
                 Share your thoughts and our AI will analyze your mood and provide personalized suggestions
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <MoodAnalyzer />
+            <CardContent className="min-h-[300px]">
+              <MoodAnalyzer onMoodAnalyzed={handleMoodAnalyzed} />
             </CardContent>
           </Card>
         </div>
         <div>
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle>Mood Trends</CardTitle>
               <CardDescription>Your mood patterns over the past week</CardDescription>
@@ -56,6 +69,9 @@ export default function MoodPage() {
           </Card>
         </div>
       </div>
+
+      {/* Content Recommendations - Show after mood analysis */}
+      {currentMood && <ContentRecommendations mood={currentMood} moodScore={moodScore} />}
 
       <Tabs defaultValue="journal">
         <TabsList className="mb-4">

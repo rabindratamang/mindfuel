@@ -6,7 +6,7 @@ from config.database import mongodb_obj
 
 router = APIRouter()
 
-@router.post("/agent/{agent_name}", response_model=AgentResponse)
+@router.post("/{agent_name}", response_model=AgentResponse)
 async def run_agent(agent_name: str, req: AgentRequest, user=Depends(get_current_user)):
     agent = get_agent(agent_name)
     if not agent:
@@ -16,7 +16,7 @@ async def run_agent(agent_name: str, req: AgentRequest, user=Depends(get_current
         result = agent.run(req.input, user_id=user, context=req.context)
         
         response_data = AgentResponse(
-            user_id=user,
+            user_id=user["id"],
             agent_name=agent_name,
             input=req.input,
             context=req.context,
@@ -29,7 +29,7 @@ async def run_agent(agent_name: str, req: AgentRequest, user=Depends(get_current
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/agent/history", response_model=list[AgentResponse])
+@router.get("/history", response_model=list[AgentResponse])
 async def get_agent_history(user=Depends(get_current_user)):
     responses = []
     async for doc in mongodb_obj.db.agent_responses.find({"user_id": user}).sort("created_at", -1).limit(10):

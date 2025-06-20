@@ -2,9 +2,12 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordBearer
 import os
 from dotenv import load_dotenv
+from config.database import mongodb_obj
+from bson import ObjectId
 
 load_dotenv()
 
@@ -15,6 +18,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
@@ -46,13 +51,25 @@ def decode_refresh_token(token: str) -> Optional[Dict[str, Any]]:
     except JWTError:
         return None
 
-def get_current_user(token: str) -> Dict[str, Any]:
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
+        user_id = payload["sub"]
+        
+        # Get fresh user data
+        user = await mongodb_obj.db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+            
+        # Combine JWT payload with fresh user data
+        return {
+            "id": user_id,
+            "email": payload["email"],  # From JWT (faster)
+            "role": payload.get("role"),  # From JWT if exists
+            "profile": {  # Fresh data from DB
+                "firstName": user["firstName"],
+                "lastName": user["lastName"],
+            }
+        }
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) 
+        raise HTTPException(status_code=401, detail="Invalid token") 

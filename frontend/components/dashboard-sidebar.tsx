@@ -6,9 +6,16 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatedIcon } from "@/components/animated-icon"
 import { motion } from "framer-motion"
+import { useAuth } from "@/contexts/auth-context"
+import { Button } from "@/components/ui/button"
 
 export function DashboardSidebar() {
   const pathname = usePathname()
+  const { logout } = useAuth()
+
+  const handleLogout = async () => {
+    await logout()
+  }
 
   const isActive = (path: string) => {
     return pathname === path
@@ -77,9 +84,15 @@ export function DashboardSidebar() {
           />
         </nav>
       </div>
-
       <div className="border-t border-slate-200 dark:border-slate-800 p-4">
-        <SidebarLink href="/logout" icon={LogOut} label="Logout" isActive={false} delay={0} />
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-5 w-5" />
+          Logout
+        </Button>
       </div>
     </motion.div>
   )

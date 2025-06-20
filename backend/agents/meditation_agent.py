@@ -1,22 +1,22 @@
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage
-from tools.spotify_tools import search_spotify_playlists
+from tools.email_tools import guided_meditation_tool2
 from config.setting import settings
 
-class GoogleNewsAgent:
+class MeditationAgent:
     def __init__(self):
         self.openai_api_key = settings.OPENAI_API_KEY
         self.model = ChatOpenAI(api_key=self.openai_api_key, model="gpt-4o-mini", verbose=True)
         self.agent = create_react_agent(
             model=self.model,
-            tools=[search_news_by_keyword],
+            tools=[guided_meditation_tool2],
             prompt = (
-              "You are a helpful Google search assistant. Your job is to help users find Google articles "
-              "based on their search queries. Use the tool to perform a search and return the top result. "
-              "Once the top result is found, return it as 'Final Answer: <result>' and stop."
+              "You are a helpful Meditation expert. Your job is to help users do meditation "
+              "based on their requests. Use the tool to generate steps for meditation."
+
             ),
-            name="google_news_assistant"
+            name="meditation_assistant"
         )
 
     def run(self, user_input):

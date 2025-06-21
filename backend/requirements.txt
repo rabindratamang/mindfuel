@@ -169,3 +169,4 @@ zstandard==0.23.0
 sendgrid
 googletrans
 email_validator==2.2.0
+asyncio-mqtt==0.16.1 

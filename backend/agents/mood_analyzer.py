@@ -1,13 +1,24 @@
-import os
 from langchain_openai import OpenAI
 from langchain_core.prompts import PromptTemplate
 from core.chroma import get_collection
 from config.setting import settings
+import re, json
+from datetime import datetime
+from typing import Dict, Any, Optional
+import asyncio
+
+from models.mood_analysis import MoodAnalysis, MoodAnalysisRepository, Analysis, Insights, Recommendations, FollowUp, RiskAssessment, Metadata, Emotion, Sentiment, ContentRecommendations, YouTubeRecommendation, ArticlesRecommendation, SpotifyRecommendation, MeditationRecommendation
+from models.mood_analysis_simple import MoodAnalysisSimple, MoodAnalysisSimpleRepository
+from database.mongo_client import get_database, init_database
+
 class MoodAnalyzerAgent:
     def __init__(self):
-        self.llm = OpenAI(openai_api_key=settings.OPENAI_API_KEY, model="gpt-4o-mini")
+        self.llm = OpenAI(openai_api_key=settings.OPENAI_API_KEY, model="gpt-4o-mini", max_tokens=10000)
         self.prompt = PromptTemplate(
             template="""
+            [SYSTEM MESSAGE]
+            You are a JSON-only response AI. Always respond with valid JSON and nothing else. Never include explanatory text, markdown, or code blocks.
+
             You are MindFuel's AI mood analysis expert. Analyze the user's input text and provide a comprehensive mood assessment in JSON format.
             `CONTEXT:
             {context}
@@ -20,6 +31,8 @@ class MoodAnalyzerAgent:
             6. Assess any risk factors or concerns
 
             USER INPUT: "{input}"
+
+            IMPORTANT: Respond ONLY with valid JSON. Do not include any explanatory text, markdown formatting, or code blocks. Start your response directly with the opening curly brace {{ and end with the closing curly brace }}.
 
             RESPONSE FORMAT (JSON):
             {{
@@ -102,20 +115,287 @@ class MoodAnalyzerAgent:
             - Avoid medical diagnosis or treatment advice
             - Encourage professional help when appropriate
 
-            Analyze the user input and give response in JSON format following the above RESPONSE FORMAT.
-            MAKE SURE TO COMPLETE THE ENTIRE JSON STRUCTURE INCLUDING ALL SECTIONS.
-            DO NOT TRUNCATE THE RESPONSE.
+           [SYSTEM RULES]
+            1. Respond **ONLY** with valid JSON that starts with `{{` and ends with `}}`.
+            2. **Never** include:
+            - Text before `{{` or after `}}`
+            - Markdown/code blocks (```json```)
+            - Explanatory comments
+            3. If you violate this, the API will reject your response.
 
-            IMPORTANT: Your response MUST be a complete JSON object with all sections filled out.
-            The response MUST end with the closing brackets for all opened sections.
-            DO NOT stop generating until the JSON is complete.`
+            [EXAMPLE OF CORRECT RESPONSE]
+            {{
+                "analysis": {{
+                    "primaryMood": "Anxious",
+                    "moodCategory": "negative"
+                }}
+            }}
+
+            [EXAMPLE OF INCORRECT RESPONSE]
+            USER INPUT: "{input}"\n           
+            {{
+                "analysis": {{
+                    "primaryMood": "Anxious"
+                }}
+            }}
+            
+            Return only the JSON object with no additional text or formatting.
             """,
             input_variables=["context", "input"]
         )
         self.chain = self.prompt | self.llm
         self.collection = get_collection("mood_analyzer")
 
-    def run(self, user_input, user_id=None, context=None):
+    def _parse_ai_response(self, result: str) -> Dict[str, Any]:
+        try:
+            try:
+                parsed_result = json.loads(result.strip())
+            except json.JSONDecodeError:
+                json_str = re.search(r"\{[\s\S]*\}", result).group(0)
+                parsed_result = json.loads(json_str)
+            return parsed_result
+        except Exception as e:
+            print(f"JSON parsing error: {e}")
+            raise
+
+    def _create_mood_analysis_model(self, parsed_result: Dict[str, Any], user_id: str) -> MoodAnalysis:
+        try:
+            analysis_data = parsed_result.get("analysis", {})
+            insights_data = parsed_result.get("insights", {})
+            recommendations_data = parsed_result.get("recommendations", {})
+            followup_data = parsed_result.get("followUp", {})
+            risk_data = parsed_result.get("riskAssessment", {})
+            metadata_data = parsed_result.get("metadata", {})
+
+            analysis = Analysis(
+                primaryMood=analysis_data.get("primaryMood", "Neutral"),
+                moodCategory=analysis_data.get("moodCategory", "neutral"),
+                confidence=analysis_data.get("confidence", 50),
+                intensity=analysis_data.get("intensity", 5),
+                emotions=[Emotion(emotion=e["emotion"], score=e["score"]) for e in analysis_data.get("emotions", [])],
+                sentiment=Sentiment(
+                    polarity=analysis_data.get("sentiment", {}).get("polarity", 0),
+                    subjectivity=analysis_data.get("sentiment", {}).get("subjectivity", 0.5)
+                )
+            )
+
+            insights = Insights(
+                summary=insights_data.get("summary", ""),
+                keyThemes=insights_data.get("keyThemes", []),
+                triggers=insights_data.get("triggers", []),
+                strengths=insights_data.get("strengths", []),
+                concerns=insights_data.get("concerns", [])
+            )
+
+            content_data = recommendations_data.get("content", {})
+            content_recommendations = ContentRecommendations(
+                youtube=YouTubeRecommendation(
+                    types=content_data.get("youtube", {}).get("types", []),
+                    keywords=content_data.get("youtube", {}).get("keywords", []),
+                    duration=content_data.get("youtube", {}).get("duration", "medium"),
+                    mood=content_data.get("youtube", {}).get("mood", "calm")
+                ),
+                articles=ArticlesRecommendation(
+                    topics=content_data.get("articles", {}).get("topics", []),
+                    difficulty=content_data.get("articles", {}).get("difficulty", "beginner"),
+                    focus=content_data.get("articles", {}).get("focus", [])
+                ),
+                spotify=SpotifyRecommendation(
+                    genres=content_data.get("spotify", {}).get("genres", []),
+                    energy=content_data.get("spotify", {}).get("energy", 0.5),
+                    valence=content_data.get("spotify", {}).get("valence", 0.5),
+                    mood=content_data.get("spotify", {}).get("mood", "relaxing")
+                ),
+                meditation=MeditationRecommendation(
+                    types=content_data.get("meditation", {}).get("types", []),
+                    duration=content_data.get("meditation", {}).get("duration", 10),
+                    difficulty=content_data.get("meditation", {}).get("difficulty", "beginner")
+                )
+            )
+
+            recommendations = Recommendations(
+                immediate=recommendations_data.get("immediate", []),
+                content=content_recommendations
+            )
+
+            followup = FollowUp(
+                questions=followup_data.get("questions", []),
+                checkIn=followup_data.get("checkIn", "in 24 hours"),
+                goals=followup_data.get("goals", [])
+            )
+
+            risk_assessment = RiskAssessment(
+                level=risk_data.get("level", "low"),
+                indicators=risk_data.get("indicators", []),
+                recommendations=risk_data.get("recommendations", []),
+                urgency=risk_data.get("urgency", "none")
+            )
+
+            metadata = Metadata(
+                wordCount=metadata_data.get("wordCount", 0),
+                complexity=metadata_data.get("complexity", "simple"),
+                timeOfDay=metadata_data.get("timeOfDay", "unknown"),
+                context=metadata_data.get("context", [])
+            )
+
+            return MoodAnalysis(
+                userId=user_id,
+                analysis=analysis,
+                insights=insights,
+                recommendations=recommendations,
+                followUp=followup,
+                riskAssessment=risk_assessment,
+                metadata=metadata
+            )
+
+        except Exception as e:
+            print(f"Error creating MoodAnalysis model: {e}")
+            raise
+
+    def _create_simple_mood_analysis(self, parsed_result: Dict[str, Any], user_id: str) -> MoodAnalysisSimple:
+        analysis_data = parsed_result.get("analysis", {})
+        insights_data = parsed_result.get("insights", {})
+        recommendations_data = parsed_result.get("recommendations", {})
+
+        return MoodAnalysisSimple(
+            userId=user_id,
+            mood=analysis_data.get("primaryMood", "Neutral"),
+            score=analysis_data.get("confidence", 50),
+            analysis=insights_data.get("summary", "Analysis completed"),
+            suggestions=recommendations_data.get("immediate", [])
+        )
+
+    async def run(self, user_input: str, user_id: str = None, context: str = None, save_to_db: bool = True) -> Dict[str, Any]:
+        """
+        Run mood analysis and optionally save to database
+        
+        Args:
+            user_input: User's text input
+            user_id: User ID for database storage
+            context: Additional context
+            save_to_db: Whether to save results to database
+            
+        Returns:
+            Dictionary with analysis results and database info
+        """
+        try:
+            context_str = """
+                - MindFuel is a mental wellness app that helps users track mood, get personalized content recommendations, and improve mental health
+                - Users share their thoughts, feelings, and current state
+                - Your analysis will be used to provide personalized YouTube videos, articles, Spotify playlists, and meditation recommendations
+                - Be empathetic, supportive, and professional in your analysis
+            """
+            
+            prompt_vars = {
+                "context": context_str,
+                "input": user_input,
+            }
+
+            # Get AI analysis by running the blocking invoke call in a separate thread
+            result = await asyncio.to_thread(self.chain.invoke, prompt_vars)
+            parsed_result = self._parse_ai_response(result)
+
+            # Get content recommendations in parallel
+            try:
+                from agents import get_agent
+                
+                youtube_rec = parsed_result.get("recommendations", {}).get("content", {}).get("youtube")
+                spotify_rec = parsed_result.get("recommendations", {}).get("content", {}).get("spotify")
+                
+                tasks = []
+                if youtube_rec:
+                    youtube_agent = get_agent("youtube_agent")
+                    tasks.append(asyncio.to_thread(youtube_agent.get_youtube_video, youtube_rec))
+                
+                if spotify_rec:
+                    spotify_agent = get_agent("spotify_agent")
+                    tasks.append(asyncio.to_thread(spotify_agent.get_spotify_recommendation, spotify_rec))
+
+                if tasks:
+                    recommendation_results = await asyncio.gather(*tasks)
+                    
+                    if youtube_rec:
+                        parsed_result["recommendations"]["content"]["youtube"]["video"] = recommendation_results.pop(0)
+                    if spotify_rec:
+                        parsed_result["recommendations"]["content"]["spotify"]["playlist"] = recommendation_results.pop(0)
+
+            except Exception as e:
+                print(f"Error getting content recommendations: {e}")
+
+            # Save to database if requested
+            db_info = {}
+            if save_to_db and user_id:
+                try:
+                    await init_database()
+                    db = await get_database()
+                    
+                    full_repo = MoodAnalysisRepository(db)
+                    full_analysis = self._create_mood_analysis_model(parsed_result, user_id)
+                    full_analysis_id = await full_repo.create(full_analysis)
+                    
+                    simple_repo = MoodAnalysisSimpleRepository(db)
+                    simple_analysis = self._create_simple_mood_analysis(parsed_result, user_id)
+                    simple_analysis_id = await simple_repo.create(simple_analysis)
+                    
+                    db_info = {
+                        "full_analysis_id": full_analysis_id,
+                        "simple_analysis_id": simple_analysis_id,
+                        "saved": True
+                    }
+                except Exception as e:
+                    print(f"Error saving to database: {e}")
+                    db_info = {"saved": False, "error": str(e)}
+
+            return {
+                "analysis": parsed_result,
+                "frontend_format": {
+                    "mood": parsed_result.get("analysis", {}).get("primaryMood", "Neutral"),
+                    "score": parsed_result.get("analysis", {}).get("confidence", 50),
+                    "analysis": parsed_result.get("insights", {}).get("summary", "Analysis completed"),
+                    "suggestions": parsed_result.get("recommendations", {}).get("immediate", [])
+                },
+                "database": db_info
+            }
+
+        except Exception as e:
+            print(f"Run error: {e}")
+            return {"error": str(e)}
+
+    async def get_user_analyses(self, user_id: str, limit: int = 10, simple: bool = True) -> Dict[str, Any]:
+        try:
+            await init_database()
+            db = await get_database()
+            
+            if simple:
+                repo = MoodAnalysisSimpleRepository(db)
+                analyses = await repo.get_by_user_id(user_id, limit)
+                return {
+                    "analyses": [analysis.dict() for analysis in analyses],
+                    "type": "simple"
+                }
+            else:
+                repo = MoodAnalysisRepository(db)
+                analyses = await repo.get_by_user_id(user_id, limit)
+                return {
+                    "analyses": [analysis.dict() for analysis in analyses],
+                    "type": "full"
+                }
+        except Exception as e:
+            print(f"Error getting user analyses: {e}")
+            return {"error": str(e)}
+
+    async def get_mood_trends(self, user_id: str, days: int = 30) -> Dict[str, Any]:
+        try:
+            await init_database()
+            db = await get_database()
+            repo = MoodAnalysisRepository(db)
+            trends = await repo.get_user_mood_trends(user_id, days)
+            return {"trends": trends}
+        except Exception as e:
+            print(f"Error getting mood trends: {e}")
+            return {"error": str(e)}
+
+    def run2(self, user_input, user_id=None, context=None):
         try:
             context_str = """
                 - MindFuel is a mental wellness app that helps users track mood, get personalized content recommendations, and improve mental health
@@ -131,47 +411,3 @@ class MoodAnalyzerAgent:
         except Exception as e:
             print(e)
             return {"error": str(e)}
-        
-
-
-
-        from langchain.chains import SequentialChain
-
-def run(self, user_input):
-    # Step 1: Mood Analysis
-    analysis_chain = analysis_prompt | self.llm
-    analysis_json = analysis_chain.invoke({"input": user_input})
-    
-    # Validate JSON
-    try:
-        analysis_data = json.loads(analysis_json)
-    except json.JSONDecodeError:
-        return {"error": "Analysis step failed"}
-
-    # Step 2: Insights
-    insights_chain = insights_prompt | self.llm
-    insights_json = insights_chain.invoke({"analysis_json": analysis_json})
-    
-    try:
-        insights_data = json.loads(insights_json)
-    except json.JSONDecodeError:
-        return {"error": "Insights step failed"}
-
-    # Step 3: Recommendations
-    recommendations_chain = recommendations_prompt | self.llm
-    recommendations_json = recommendations_chain.invoke({
-        "analysis_json": analysis_json,
-        "insights_json": insights_json
-    })
-
-    try:
-        recommendations_data = json.loads(recommendations_json)
-    except json.JSONDecodeError:
-        return {"error": "Recommendations step failed"}
-
-    # Combine all outputs
-    return {
-        **analysis_data,
-        **insights_data,
-        **recommendations_data
-    }

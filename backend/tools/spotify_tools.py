@@ -22,7 +22,7 @@ def search_spotify_playlists(query: str) -> dict:
     """
     Search for Spotify playlists using a keyword (e.g., "sleep", "meditation").
 
-    Returns a JSON object with the top 5 playlists including name, description, image, link, owner, and track count.
+    Returns a JSON object with the top 6 playlists including name, description, image, link, owner, and track count.
     """
     client_id = settings.SPOTIFY_CLIENT_ID
     client_secret = settings.SPOTIFY_CLIENT_SECRET
@@ -35,7 +35,7 @@ def search_spotify_playlists(query: str) -> dict:
         params = {
             'q': query,
             'type': 'playlist',
-            'limit': 5
+            'limit': 6
         }
         url = 'https://api.spotify.com/v1/search'
         response = requests.get(url, headers=headers, params=params)

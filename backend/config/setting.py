@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     MONGODB_URL: str
     DATABASE_NAME: str
     MONGODB_DB_NAME: str
-
+    YOUTUBE_API_KEY: str
+    
     class Config:
         env_file = ".env"
         extra = "allow"

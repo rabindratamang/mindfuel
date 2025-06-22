@@ -13,26 +13,30 @@ class SpotifyAgent:
                         model=self.model,
                         tools=[search_spotify_playlists],
                         prompt=(
-                            "You are a helpful Spotify assistant. Your job is to help users discover Spotify playlists "
+                            "You are a helpful Spotify assistant. Your ONLY task is to help users discover Spotify playlists "
                             "based on their search queries using the tool provided.\n\n"
-                            "🧠 Think step-by-step, and always call the `search_spotify_playlists` tool with the user query.\n"
-                            "📦 When returning results to the user, format the final output in **JSON** using this structure:\n\n"
+                            "RULES YOU MUST FOLLOW:\n"
+                            "1. ALWAYS call the `search_spotify_playlists` tool with the user query\n"
+                            "2. Your FINAL response MUST be EXACTLY in this JSON format:\n"
                             "{\n"
-                            '  "query": string,\n'
-                            '  "total": integer,\n'
+                            '  "query": "user\'s original search query",\n'
+                            '  "total": number_of_results,\n'
                             '  "playlists": [\n'
                             "    {\n"
-                            '      "name": string,\n'
-                            '      "description": string,\n'
-                            '      "external_url": string,\n'
-                            '      "image": string,\n'
-                            '      "owner": {"name": string, "url": string},\n'
-                            '      "tracks": {"url": string, "total": integer}\n'
-                            "    },\n"
-                            "    ...\n"
+                            '      "name": "playlist name",\n'
+                            '      "description": "playlist description",\n'
+                            '      "external_url": "https://spotify.com/...",\n'
+                            '      "image": "https://image.url",\n'
+                            '      "owner": {"name": "owner name", "url": "owner url"},\n'
+                            '      "tracks": {"url": "tracks url", "total": number_of_tracks}\n'
+                            "    }\n"
                             "  ]\n"
                             "}\n\n"
-                            "Only return JSON. Do not add any extra commentary or text outside of the JSON structure."
+                            "3. Your response must ONLY contain valid JSON - NO other text, NO markdown, NO explanations\n"
+                            "4. If you cannot find results, return empty playlists array but maintain the structure\n"
+                            "5. If you violate these rules, the application will FAIL\n\n"
+                            "EXAMPLE OUTPUT:\n"
+                            '{"query":"chill vibes","total":1,"playlists":[{"name": "Epic Emotional Music | Uplifting Inspirational", "description": " Ｏｒｃｈｅｓｔｒａｌ · Ｂｅａｕｔｉｆｕｌ · Ｆａｎｔａｓｙ · Ｈｅｒｏｉｃ", "external_url": "https://open.spotify.com/playlist/6MyTOl5TsKpoGCmbLrXD79", "image": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da847a9a381db427fd08da2e1899", "owner": {"name": "kainser", "url": "https://open.spotify.com/user/jbxz5ezbhylij5jr4czsdx3ew"}, "tracks": {"url": "https://api.spotify.com/v1/playlists/6MyTOl5TsKpoGCmbLrXD79/tracks", "total": 716}}]}'
                         ),
                         name="spotify_assistant"
                     )
@@ -46,6 +50,7 @@ class SpotifyAgent:
     def get_spotify_recommendation(self, spotify_recommendation: dict):
         try:
             genres = spotify_recommendation.get("genres", [])
+            keywords = spotify_recommendation.get("keywords", [])
             mood = spotify_recommendation.get("mood", "")
             energy = spotify_recommendation.get("energy", "")
             valence = spotify_recommendation.get("valence", "")
@@ -53,10 +58,11 @@ class SpotifyAgent:
             prompt = (
                 "Find a Spotify playlist or track recommendation with the following:\n"
                 f"- Genres: {', '.join(genres)}\n"
+                f"- Keywords: {', '.join(keywords)}\n"
                 f"- Mood: {mood}\n"
                 f"- Energy level: {energy} (0=low, 1=high)\n"
                 f"- Valence (positivity): {valence} (0=sad, 1=happy)\n\n"
-                "Only return JSON with: title, spotify_url, duration_seconds, thumbnail, and artist/playlist details."
+                "Do not include any commentary or explanation outside the JSON. Only return valid JSON. Example do not wrap it in ```json or any markdown formatting"
             )
 
             response = self.agent.invoke({

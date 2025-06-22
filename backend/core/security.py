@@ -6,16 +6,15 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 import os
 from dotenv import load_dotenv
-from config.database import mongodb_obj
 from bson import ObjectId
+from models.user import UserRepository
 
 load_dotenv()
 
-# Security configuration
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+ACCESS_TOKEN_EXPIRE_MINUTES = 20160
+REFRESH_TOKEN_EXPIRE_DAYS = 15
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -51,24 +50,40 @@ def decode_refresh_token(token: str) -> Optional[Dict[str, Any]]:
     except JWTError:
         return None
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
+    """Get current user ID from JWT token"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload["sub"]
         
-        # Get fresh user data
-        user = await mongodb_obj.db.users.find_one({"_id": ObjectId(user_id)})
+        # Use UserRepository to check if user exists
+        user_repository = UserRepository()
+        user = await user_repository.get_by_id(user_id)
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
             
-        # Combine JWT payload with fresh user data
+        return user_id
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+async def get_current_user_with_profile(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload["sub"]
+        
+        # Use UserRepository to get user data
+        user_repository = UserRepository()
+        user = await user_repository.get_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+            
         return {
             "id": user_id,
             "email": payload["email"],  # From JWT (faster)
             "role": payload.get("role"),  # From JWT if exists
             "profile": {  # Fresh data from DB
-                "firstName": user["firstName"],
-                "lastName": user["lastName"],
+                "firstName": user.firstName,
+                "lastName": user.lastName,
             }
         }
     except JWTError:

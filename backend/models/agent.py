@@ -5,7 +5,7 @@ import uuid
 
 class AgentRequest(BaseModel):
     input: str
-    context: Optional[Dict[str, Any]] = None
+    context: Optional[str] = None
 
 class AgentResponse(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), alias="_id")

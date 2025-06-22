@@ -4,22 +4,17 @@ load_dotenv()
 from fastapi import FastAPI, APIRouter
 from contextlib import asynccontextmanager
 from api import auth, agent
-from config.database import mongodb_obj
+from database.mongo_client import init_database, close_database
 from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await mongodb_obj.connect_db()
+    await init_database()
     yield
-    await mongodb_obj.close_db()
+    await close_database()
 
 app = FastAPI(lifespan=lifespan)
 
-# CORS (Cross-Origin Resource Sharing) middleware configuration
-# Allows cross-origin requests from any domain (*) with:
-# - Credentials allowed 
-# - All HTTP methods permitted
-# - All headers accepted
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

@@ -1,0 +1,195 @@
+{
+    "_id": "ObjectId",
+    "userId": "ObjectId (ref: users)",
+    "analysis": {
+        "primaryMood": "Frustrated",
+        "moodCategory": "negative",
+        "confidence": 85,
+        "intensity": 7,
+        "emotions": [
+            {
+                "emotion": "Frustration",
+                "score": 80
+            },
+            {
+                "emotion": "Confusion",
+                "score": 70
+            }
+        ],
+        "sentiment": {
+            "polarity": -0.5,
+            "subjectivity": 0.8
+        }
+    },
+    "insights": {
+        "summary": "You seem to be feeling frustrated and confused about your inability to sleep. This may indicate underlying stress or racing thoughts.",
+        "keyThemes": [
+            "sleep",
+            "stress"
+        ],
+        "triggers": [
+            "late hours",
+            "inability to sleep"
+        ],
+        "strengths": [
+            "awareness of your sleep needs"
+        ],
+        "concerns": [
+            "persistent sleeplessness"
+        ]
+    },
+    "recommendations": {
+        "immediate": [
+            "Practice deep breathing exercises to calm your mind.",
+            "Establish a bedtime routine to signal to your body that it's time to sleep.",
+            "Limit screen time before bed to reduce stimulation.",
+            "Consider journaling your thoughts to clear your mind."
+        ],
+        "content": {
+            "youtube": {
+                "types": [
+                    "meditation",
+                    "breathing exercises"
+                ],
+                "keywords": [
+                    "sleep meditation",
+                    "relaxation techniques"
+                ],
+                "duration": "medium",
+                "mood": "calm",
+                "video": {
+                    "title": "Hypnosis AND Progressive Muscle Relaxation For A Deep Sleep",
+                    "video_url": "https://www.youtube.com/watch?v=qIe1z_aA10o",
+                    "duration_seconds": 4462,
+                    "thumbnail": "https://i.ytimg.com/vi/qIe1z_aA10o/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC7QR7eqSQmVhPh3QoRRbSUsctWow",
+                    "channel": {
+                        "title": "Andrew Green Hypnosis",
+                        "channel_id": "UCT7dbrudmE1XZTGW3GFfhFQ",
+                        "avatar": "https://yt3.ggpht.com/GJg6CHYXcOG1PDDfK6tQWVpJJXO2vj2_I3NnaFgojsaWqEefLX0Su7Lv8v90lurB_-aaCwIUdek=s68-c-k-c0x00ffffff-no-rj",
+                        "channel_url": "https://www.youtube.com/channel/UCT7dbrudmE1XZTGW3GFfhFQ"
+                    }
+                }
+            },
+            "articles": {
+                "topics": [
+                    "sleep hygiene",
+                    "mindfulness"
+                ],
+                "difficulty": "beginner",
+                "focus": [
+                    "understanding sleep patterns",
+                    "coping strategies"
+                ]
+            },
+            "spotify": {
+                "genres": [
+                    "ambient",
+                    "classical"
+                ],
+                "energy": 0,
+                "valence": 0.5,
+                "mood": "relaxing",
+                "playlist": {
+                    "query": "ambient classical relaxing",
+                    "total": 10,
+                    "playlists": [
+                        {
+                            "name": "Sleep Music for Deep Sleeping",
+                            "description": "(No Shuffle. Press track 1 and enjoy) Watch on <a href=\"https://www.youtube.com/@SoothingOasisMusic\">YouTube</a>. Our relaxing ambient music is designed to help you calm down, fall asleep faster, and sleep more deeply. 💤",
+                            "external_url": "https://open.spotify.com/playlist/5FI8rn340FgsOB7B8Ic0DZ",
+                            "image": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da841011a2539b708c1a7aecfa4f",
+                            "owner": {
+                                "name": "Soothing Oasis",
+                                "url": "https://open.spotify.com/user/31oxlugy4vprelmopuzt3thcjsdu"
+                            },
+                            "tracks": {
+                                "url": "https://api.spotify.com/v1/playlists/5FI8rn340FgsOB7B8Ic0DZ/tracks",
+                                "total": 432
+                            }
+                        },
+                        {
+                            "name": "Ambient Deep Sleep 2025",
+                            "description": "Soft, calming ambient music. Relaxing, soothing soundscapes for sleeping, stress relief, anxiety, recovery and peaceful moments. Sleep well and ease your mind. Música Para Dormir, Sueño Profundo. Help sleep with artists like: Stars of the Lid, Nils Frahm, Brian Eno, William Basinski. Weekly Updates.",
+                            "external_url": "https://open.spotify.com/playlist/6bGe4ekNk4E4h9vVkuItul",
+                            "image": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84babfde76d19c4c109b48f599",
+                            "owner": {
+                                "name": "Soaring Music",
+                                "url": "https://open.spotify.com/user/lst116zsq8n73zz4ir00vyz90"
+                            },
+                            "tracks": {
+                                "url": "https://api.spotify.com/v1/playlists/6bGe4ekNk4E4h9vVkuItul/tracks",
+                                "total": 226
+                            }
+                        },
+                        {
+                            "name": "Beautiful, Calming Classical Music",
+                            "description": "",
+                            "external_url": "https://open.spotify.com/playlist/6jMCpOBtseRh7Pv0nCnm31",
+                            "image": "https://mosaic.scdn.co/640/ab67616d00001e020bb74649863dee1a10b5bc0aab67616d00001e020d3d783124fd96e37b6feee4ab67616d00001e023eda371105fc7e76fb917e66ab67616d00001e02cbb64bd416bb225456100bbc",
+                            "owner": {
+                                "name": "vcmstow",
+                                "url": "https://open.spotify.com/user/vcmstow"
+                            },
+                            "tracks": {
+                                "url": "https://api.spotify.com/v1/playlists/6jMCpOBtseRh7Pv0nCnm31/tracks",
+                                "total": 292
+                            }
+                        },
+                        {
+                            "name": "Classical Study Music for Focus 🎻🎶",
+                            "description": "Best Classical Music for Relaxing Focus Working Reading Background Instrumental Classics. Peaceful Studying Playlist Listen to <a href=\"https://open.spotify.com/playlist/7oJS52tMqcz2ZVITSfWm0h\">calming Classical Piano playlist </a> Bach, Tchaikovsky, Mozart, Beethoven, Chopin, Vivaldi and more!",
+                            "external_url": "https://open.spotify.com/playlist/0QknRAZUpwPtM2dQIzAnAa",
+                            "image": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c490274beb31d3c613639793e",
+                            "owner": {
+                                "name": "Prime Feelings",
+                                "url": "https://open.spotify.com/user/dlf2he31zeeqiypbj1tde310e"
+                            },
+                            "tracks": {
+                                "url": "https://api.spotify.com/v1/playlists/0QknRAZUpwPtM2dQIzAnAa/tracks",
+                                "total": 642
+                            }
+                        }
+                    ]
+                }
+            },
+            "meditation": {
+                "types": [
+                    "breathing",
+                    "body scan"
+                ],
+                "duration": 10,
+                "difficulty": "beginner"
+            }
+        }
+    },
+    "followUp": {
+        "questions": [
+            "What thoughts are keeping you awake?",
+            "Have you experienced this sleeplessness often?",
+            "What helps you relax before bed?"
+        ],
+        "checkIn": "in 24 hours",
+        "goals": [
+            "Establish a consistent sleep schedule",
+            "Practice relaxation techniques before bed"
+        ]
+    },
+    "riskAssessment": {
+        "level": "medium",
+        "indicators": [
+            "persistent sleep issues"
+        ],
+        "recommendations": [
+            "Consider speaking to a healthcare professional if sleeplessness continues."
+        ],
+        "urgency": "monitor"
+    },
+    "metadata": {
+        "wordCount": 25,
+        "complexity": "simple",
+        "timeOfDay": "night",
+        "context": [
+            "home"
+        ]
+    }
+}

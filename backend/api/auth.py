@@ -1,16 +1,24 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
-from core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_refresh_token
-from models.user import UserLogin, UserRegister, UserInDB, User
-from config.database import mongodb_obj
+from core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_refresh_token, get_current_user
+from models.user import UserLogin, UserRegister, UserInDB, User, UserRepository
+from utils.user_helpers import UserHelpers
 
 router = APIRouter()
+user_repository = UserRepository()
+user_helpers = UserHelpers(user_repository)
 
 @router.post("/register")
 async def register(register_data: UserRegister):
-    existing_user = await mongodb_obj.db.users.find_one({"email": register_data.email})
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    validation = await user_helpers.validate_user_registration(
+        register_data.email,
+        register_data.password,
+        register_data.firstName,
+        register_data.lastName
+    )
+    
+    if not validation["valid"]:
+        raise HTTPException(status_code=400, detail={"message": "Validation failed", "errors": validation["errors"]})
     
     user_data = UserInDB(
         email=register_data.email,
@@ -19,22 +27,22 @@ async def register(register_data: UserRegister):
         hashedPassword=hash_password(register_data.password)
     )
     
-    result = await mongodb_obj.db.users.insert_one(user_data.model_dump())
-    created_user = await mongodb_obj.db.users.find_one({"_id": result.inserted_id})
+    user_id = await user_repository.create(user_data)
+    created_user = await user_repository.get_user_for_response(user_id)
     
     access_token = create_access_token({
-        "sub": str(created_user["_id"]),
-        "email": created_user["email"],
-        "firstName": created_user["firstName"],
-        "lastName": created_user["lastName"]
+        "sub": user_id,
+        "email": created_user.email,
+        "firstName": created_user.firstName,
+        "lastName": created_user.lastName
     })
     refresh_token = create_refresh_token({
-        "sub": str(created_user["_id"]),
-        "email": created_user["email"]
+        "sub": user_id,
+        "email": created_user.email
     })
     
     return {
-        "user": User(**created_user),
+        "user": created_user.model_dump(by_alias=True),
         "tokens": {
             "accessToken": access_token,
             "refreshToken": refresh_token,
@@ -44,23 +52,28 @@ async def register(register_data: UserRegister):
 
 @router.post("/login")
 async def login(login_data: UserLogin):
-    user = await mongodb_obj.db.users.find_one({"email": login_data.email})
-    if not user or not verify_password(login_data.password, user["hashedPassword"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+    validation = await user_helpers.validate_user_login(login_data.email, login_data.password)
+    
+    if not validation["valid"]:
+        raise HTTPException(status_code=401, detail={"message": "Login failed", "errors": validation["errors"]})
+    
+    user = validation["user"]
     
     access_token = create_access_token({
-        "sub": str(user["_id"]),
-        "email": user["email"],
-        "firstName": user["firstName"],
-        "lastName": user["lastName"]
+        "sub": user.id,
+        "email": user.email,
+        "firstName": user.firstName,
+        "lastName": user.lastName
     })
     refresh_token = create_refresh_token({
-        "sub": str(user["_id"]),
-        "email": user["email"]
+        "sub": user.id,
+        "email": user.email
     })
     
+    user_response = await user_repository.get_user_for_response(user.id)
+    
     return {
-        "user": User(**user).model_dump(by_alias=True),
+        "user": user_response.model_dump(by_alias=True),
         "tokens": {
             "accessToken": access_token,
             "refreshToken": refresh_token,
@@ -74,20 +87,32 @@ async def refresh_token(refresh_token: str):
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
     
-    # Get user from database
-    user = await mongodb_obj.db.users.find_one({"_id": payload["sub"]})
+    user = await user_repository.get_by_id(payload["sub"])
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     
-    # Create new access token
     new_access_token = create_access_token({
-        "sub": str(user["_id"]),
-        "email": user["email"],
-        "firstName": user["firstName"],
-        "lastName": user["lastName"]
+        "sub": user.id,
+        "email": user.email,
+        "firstName": user.firstName,
+        "lastName": user.lastName
     })
     
     return {
         "accessToken": new_access_token,
         "tokenType": "bearer"
-    } 
+    }
+
+@router.post("/change-password")
+async def change_password(
+    current_password: str,
+    new_password: str,
+    current_user_id: str = Depends(get_current_user)
+):
+    """Change user password with validation"""
+    result = await user_helpers.change_user_password(current_user_id, current_password, new_password)
+    
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail={"message": "Password change failed", "errors": result["errors"]})
+    
+    return {"message": "Password changed successfully"} 

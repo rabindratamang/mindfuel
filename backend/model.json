@@ -1,0 +1,732 @@
+{
+    "users": {
+      "_id": "ObjectId",
+      "email": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "password": "string (hashed)",
+      "emailVerified": "boolean",
+      "emailVerificationToken": "string",
+      "passwordResetToken": "string",
+      "passwordResetExpires": "Date",
+      "refreshTokens": ["string"],
+      "lastLogin": "Date",
+      "loginAttempts": "number",
+      "lockUntil": "Date",
+      "status": "string", // active, suspended, deleted
+      "profile": {
+        "avatar": "string (URL)",
+        "bio": "string",
+        "dateOfBirth": "Date",
+        "gender": "string",
+        "timezone": "string",
+        "language": "string",
+        "country": "string",
+        "phoneNumber": "string",
+        "emergencyContact": {
+          "name": "string",
+          "phone": "string",
+          "relationship": "string"
+        }
+      },
+      "subscription": {
+        "plan": "string", // free, premium, pro
+        "status": "string", // active, cancelled, expired
+        "startDate": "Date",
+        "endDate": "Date",
+        "autoRenew": "boolean",
+        "paymentMethod": "string"
+      },
+      "onboarding": {
+        "completed": "boolean",
+        "currentStep": "number",
+        "completedSteps": ["string"],
+        "goals": ["string"], // stress-relief, better-sleep, mood-tracking, etc.
+        "experience": "string", // beginner, intermediate, advanced
+        "preferences": {
+          "sessionDuration": "number", // minutes
+          "reminderTime": "string",
+          "focusAreas": ["string"]
+        }
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+  
+    "moodAnalyses": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "sessionId": "string", // For grouping related analyses
+      "input": {
+        "text": "string",
+        "method": "string", // text, voice, quick-select
+        "language": "string",
+        "wordCount": "number"
+      },
+      "analysis": {
+        "mood": "string", // Primary mood
+        "moodCategory": "string", // positive, negative, neutral
+        "confidence": "number", // 0-100
+        "intensity": "number", // 1-10
+        "emotions": [
+          {
+            "emotion": "string",
+            "score": "number"
+          }
+        ],
+        "sentiment": {
+          "polarity": "number", // -1 to 1
+          "subjectivity": "number" // 0 to 1
+        },
+        "keywords": ["string"],
+        "themes": ["string"]
+      },
+      "aiResponse": {
+        "summary": "string",
+        "insights": ["string"],
+        "suggestions": ["string"],
+        "riskLevel": "string", // low, medium, high
+        "followUpQuestions": ["string"]
+      },
+      "context": {
+        "timeOfDay": "string",
+        "dayOfWeek": "string",
+        "weather": "string",
+        "location": "string",
+        "triggers": ["string"],
+        "activities": ["string"]
+      },
+      "metadata": {
+        "processingTime": "number",
+        "aiModel": "string",
+        "version": "string",
+        "deviceType": "string",
+        "ipAddress": "string"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+  
+    "moodJournalEntries": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "moodAnalysisId": "ObjectId (ref: moodAnalyses)",
+      "date": "Date",
+      "title": "string",
+      "content": "string",
+      "mood": {
+        "primary": "string",
+        "secondary": ["string"],
+        "intensity": "number"
+      },
+      "tags": ["string"],
+      "media": [
+        {
+          "type": "string", // image, audio, video
+          "url": "string",
+          "caption": "string"
+        }
+      ],
+      "privacy": {
+        "isPrivate": "boolean",
+        "shareWithTherapist": "boolean",
+        "shareAnonymously": "boolean"
+      },
+      "reactions": {
+        "helpful": "number",
+        "relatable": "number",
+        "inspiring": "number"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+  
+    "meditationSessions": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "type": "string", // guided, unguided, breathing, body-scan, etc.
+      "title": "string",
+      "description": "string",
+      "category": "string", // stress-relief, sleep, focus, etc.
+      "difficulty": "string", // beginner, intermediate, advanced
+      "duration": {
+        "planned": "number", // seconds
+        "actual": "number" // seconds
+      },
+      "audio": {
+        "url": "string",
+        "instructor": "string",
+        "backgroundMusic": "string",
+        "volume": "number"
+      },
+      "progress": {
+        "completed": "boolean",
+        "completionPercentage": "number",
+        "pauseCount": "number",
+        "pauseDuration": "number"
+      },
+      "experience": {
+        "rating": "number", // 1-5
+        "mood": {
+          "before": "string",
+          "after": "string"
+        },
+        "notes": "string",
+        "benefits": ["string"],
+        "challenges": ["string"]
+      },
+      "biometrics": {
+        "heartRateBefore": "number",
+        "heartRateAfter": "number",
+        "stressLevelBefore": "number",
+        "stressLevelAfter": "number"
+      },
+      "environment": {
+        "location": "string",
+        "ambientNoise": "string",
+        "lighting": "string",
+        "temperature": "number"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+  
+    "sleepTracking": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "date": "Date", // Sleep date (when sleep started)
+      "bedtime": "Date",
+      "sleepTime": "Date",
+      "wakeTime": "Date",
+      "getUpTime": "Date",
+      "duration": {
+        "total": "number", // minutes
+        "deep": "number",
+        "light": "number",
+        "rem": "number",
+        "awake": "number"
+      },
+      "quality": {
+        "rating": "number", // 1-10
+        "restfulness": "number", // 1-10
+        "efficiency": "number" // percentage
+      },
+      "factors": {
+        "caffeine": "boolean",
+        "alcohol": "boolean",
+        "exercise": "boolean",
+        "stress": "number", // 1-10
+        "screenTime": "number", // minutes before bed
+        "roomTemperature": "number",
+        "noise": "string",
+        "medications": ["string"]
+      },
+      "symptoms": {
+        "snoring": "boolean",
+        "restlessness": "number", // 1-10
+        "nightmares": "boolean",
+        "sleepwalking": "boolean",
+        "apnea": "boolean"
+      },
+      "mood": {
+        "beforeSleep": "string",
+        "uponWaking": "string",
+        "energyLevel": "number" // 1-10
+      },
+      "notes": "string",
+      "source": "string", // manual, device, app
+      "deviceData": {
+        "deviceId": "string",
+        "rawData": "Mixed"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+  
+    "contentRecommendations": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "moodAnalysisId": "ObjectId (ref: moodAnalyses)",
+      "mood": "string",
+      "context": {
+        "timeOfDay": "string",
+        "userGoals": ["string"],
+        "recentActivity": "string"
+      },
+      "recommendations": {
+        "youtube": [
+          {
+            "id": "string",
+            "videoId": "string",
+            "title": "string",
+            "description": "string",
+            "thumbnail": "string",
+            "duration": "string",
+            "channel": {
+              "name": "string",
+              "id": "string",
+              "verified": "boolean"
+            },
+            "url": "string",
+            "tags": ["string"],
+            "category": "string",
+            "publishedAt": "Date",
+            "statistics": {
+              "viewCount": "number",
+              "likeCount": "number",
+              "commentCount": "number"
+            },
+            "relevanceScore": "number",
+            "moodMatch": "number"
+          }
+        ],
+        "articles": [
+          {
+            "id": "string",
+            "title": "string",
+            "description": "string",
+            "content": "string",
+            "thumbnail": "string",
+            "author": {
+              "name": "string",
+              "credentials": "string",
+              "bio": "string"
+            },
+            "url": "string",
+            "tags": ["string"],
+            "category": "string",
+            "source": "string",
+            "publishedAt": "Date",
+            "readingTime": "number",
+            "difficulty": "string",
+            "credibilityScore": "number",
+            "relevanceScore": "number"
+          }
+        ],
+        "spotify": [
+          {
+            "id": "string",
+            "playlistId": "string",
+            "title": "string",
+            "description": "string",
+            "thumbnail": "string",
+            "duration": "string",
+            "creator": "string",
+            "url": "string",
+            "tags": ["string"],
+            "tracks": [
+              {
+                "name": "string",
+                "artist": "string",
+                "duration": "number",
+                "preview": "string"
+              }
+            ],
+            "audioFeatures": {
+              "energy": "number",
+              "valence": "number",
+              "danceability": "number",
+              "acousticness": "number",
+              "instrumentalness": "number"
+            },
+            "genre": ["string"],
+            "mood": "string",
+            "relevanceScore": "number"
+          }
+        ],
+        "meditations": [
+          {
+            "id": "string",
+            "title": "string",
+            "description": "string",
+            "instructor": "string",
+            "duration": "number",
+            "type": "string",
+            "difficulty": "string",
+            "audioUrl": "string",
+            "thumbnail": "string",
+            "tags": ["string"],
+            "benefits": ["string"],
+            "relevanceScore": "number"
+          }
+        ]
+      },
+      "algorithm": {
+        "version": "string",
+        "factors": ["string"],
+        "weights": "Mixed"
+      },
+      "createdAt": "Date",
+      "expiresAt": "Date"
+    },
+  
+    "userContentInteractions": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "contentId": "string",
+      "contentType": "string", // youtube, article, spotify, meditation
+      "moodAnalysisId": "ObjectId (ref: moodAnalyses)",
+      "recommendationId": "ObjectId (ref: contentRecommendations)",
+      "interaction": {
+        "type": "string", // view, like, save, share, complete, skip
+        "timestamp": "Date",
+        "duration": "number", // seconds engaged
+        "completion": "number", // percentage completed
+        "quality": "number" // 1-5 rating
+      },
+      "context": {
+        "device": "string",
+        "location": "string",
+        "timeOfDay": "string",
+        "mood": "string"
+      },
+      "feedback": {
+        "helpful": "boolean",
+        "relevant": "boolean",
+        "rating": "number",
+        "comment": "string",
+        "wouldRecommend": "boolean"
+      },
+      "outcome": {
+        "moodChange": "string",
+        "stressReduction": "number",
+        "satisfaction": "number",
+        "followUpAction": "string"
+      },
+      "createdAt": "Date"
+    },
+  
+    "notifications": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "type": "string", // reminder, insight, achievement, system, social
+      "category": "string", // mood, meditation, sleep, general
+      "title": "string",
+      "message": "string",
+      "data": "Mixed", // Additional data for the notification
+      "priority": "string", // low, medium, high, urgent
+      "channels": ["string"], // push, email, sms, in-app
+      "status": {
+        "sent": "boolean",
+        "delivered": "boolean",
+        "read": "boolean",
+        "clicked": "boolean"
+      },
+      "scheduling": {
+        "sendAt": "Date",
+        "timezone": "string",
+        "recurring": "boolean",
+        "frequency": "string", // daily, weekly, monthly
+        "daysOfWeek": ["number"],
+        "endDate": "Date"
+      },
+      "personalization": {
+        "mood": "string",
+        "timeOfDay": "string",
+        "userGoals": ["string"],
+        "activityLevel": "string"
+      },
+      "analytics": {
+        "sentAt": "Date",
+        "deliveredAt": "Date",
+        "readAt": "Date",
+        "clickedAt": "Date",
+        "deviceType": "string"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+  
+    "userSettings": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "notifications": {
+        "push": {
+          "enabled": "boolean",
+          "moodReminders": "boolean",
+          "meditationReminders": "boolean",
+          "sleepReminders": "boolean",
+          "insights": "boolean",
+          "achievements": "boolean",
+          "quietHours": {
+            "enabled": "boolean",
+            "start": "string", // HH:MM
+            "end": "string" // HH:MM
+          }
+        },
+        "email": {
+          "enabled": "boolean",
+          "weeklyReports": "boolean",
+          "monthlyInsights": "boolean",
+          "tips": "boolean",
+          "updates": "boolean"
+        },
+        "sms": {
+          "enabled": "boolean",
+          "emergencyOnly": "boolean"
+        }
+      },
+      "privacy": {
+        "dataSharing": "boolean",
+        "anonymousAnalytics": "boolean",
+        "researchParticipation": "boolean",
+        "profileVisibility": "string", // public, friends, private
+        "shareProgress": "boolean"
+      },
+      "preferences": {
+        "theme": "string", // light, dark, auto
+        "language": "string",
+        "units": "string", // metric, imperial
+        "dateFormat": "string",
+        "timeFormat": "string", // 12h, 24h
+        "currency": "string"
+      },
+      "content": {
+        "youtube": {
+          "enabled": "boolean",
+          "maxDuration": "number",
+          "preferredChannels": ["string"],
+          "blockedChannels": ["string"],
+          "categories": ["string"],
+          "language": "string"
+        },
+        "articles": {
+          "enabled": "boolean",
+          "maxReadingTime": "number",
+          "preferredSources": ["string"],
+          "blockedSources": ["string"],
+          "topics": ["string"],
+          "difficulty": "string"
+        },
+        "spotify": {
+          "enabled": "boolean",
+          "explicitContent": "boolean",
+          "preferredGenres": ["string"],
+          "blockedGenres": ["string"],
+          "audioFeatures": {
+            "energy": { "min": "number", "max": "number" },
+            "valence": { "min": "number", "max": "number" }
+          }
+        },
+        "meditation": {
+          "preferredInstructors": ["string"],
+          "preferredTypes": ["string"],
+          "defaultDuration": "number",
+          "backgroundSounds": "boolean",
+          "guidanceLevel": "string"
+        }
+      },
+      "goals": {
+        "mood": {
+          "trackDaily": "boolean",
+          "targetMood": "string",
+          "improvementAreas": ["string"]
+        },
+        "meditation": {
+          "dailyMinutes": "number",
+          "weeklyGoal": "number",
+          "preferredTimes": ["string"],
+          "streakTarget": "number"
+        },
+        "sleep": {
+          "targetBedtime": "string",
+          "targetWakeTime": "string",
+          "targetDuration": "number",
+          "qualityGoal": "number"
+        }
+      },
+      "integrations": {
+        "healthKit": "boolean",
+        "googleFit": "boolean",
+        "fitbit": "boolean",
+        "spotify": {
+          "connected": "boolean",
+          "accessToken": "string",
+          "refreshToken": "string"
+        },
+        "calendar": {
+          "connected": "boolean",
+          "syncMeditation": "boolean",
+          "syncSleep": "boolean"
+        }
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+  
+    "moodTrends": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "period": "string", // daily, weekly, monthly
+      "date": "Date",
+      "statistics": {
+        "totalAnalyses": "number",
+        "averageMoodScore": "number",
+        "moodVariability": "number",
+        "dominantMood": "string",
+        "moodDistribution": [
+          {
+            "mood": "string",
+            "count": "number",
+            "percentage": "number"
+          }
+        ],
+        "timePatterns": [
+          {
+            "timeOfDay": "string",
+            "averageMood": "string",
+            "count": "number"
+          }
+        ]
+      },
+      "insights": [
+        {
+          "type": "string",
+          "description": "string",
+          "confidence": "number",
+          "actionable": "boolean"
+        }
+      ],
+      "correlations": [
+        {
+          "factor": "string", // sleep, meditation, weather, etc.
+          "correlation": "number", // -1 to 1
+          "significance": "number"
+        }
+      ],
+      "createdAt": "Date"
+    },
+  
+    "aiInsights": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "type": "string", // pattern, trigger, recommendation, warning
+      "category": "string", // mood, sleep, meditation, general
+      "title": "string",
+      "description": "string",
+      "severity": "string", // info, warning, critical
+      "insights": [
+        {
+          "finding": "string",
+          "evidence": ["string"],
+          "confidence": "number",
+          "impact": "string", // low, medium, high
+          "recommendations": ["string"],
+          "timeframe": "string"
+        }
+      ],
+      "dataSource": {
+        "analysisCount": "number",
+        "dateRange": {
+          "start": "Date",
+          "end": "Date"
+        },
+        "dataTypes": ["string"]
+      },
+      "personalization": {
+        "userGoals": ["string"],
+        "currentChallenges": ["string"],
+        "preferences": "Mixed"
+      },
+      "status": {
+        "isActive": "boolean",
+        "acknowledged": "boolean",
+        "actionTaken": "boolean",
+        "effectiveness": "number"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "expiresAt": "Date"
+    },
+  
+    "achievements": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "type": "string", // streak, milestone, improvement, consistency
+      "category": "string", // mood, meditation, sleep, general
+      "title": "string",
+      "description": "string",
+      "icon": "string",
+      "criteria": {
+        "metric": "string",
+        "threshold": "number",
+        "timeframe": "string"
+      },
+      "progress": {
+        "current": "number",
+        "target": "number",
+        "percentage": "number"
+      },
+      "status": "string", // locked, in-progress, completed
+      "unlockedAt": "Date",
+      "points": "number",
+      "rarity": "string", // common, rare, epic, legendary
+      "shareableImage": "string",
+      "createdAt": "Date"
+    },
+  
+    "userSessions": {
+      "_id": "ObjectId",
+      "userId": "ObjectId (ref: users)",
+      "sessionId": "string",
+      "deviceInfo": {
+        "type": "string", // mobile, desktop, tablet
+        "os": "string",
+        "browser": "string",
+        "version": "string",
+        "userAgent": "string"
+      },
+      "location": {
+        "ip": "string",
+        "country": "string",
+        "city": "string",
+        "timezone": "string"
+      },
+      "activity": [
+        {
+          "page": "string",
+          "action": "string",
+          "timestamp": "Date",
+          "duration": "number",
+          "data": "Mixed"
+        }
+      ],
+      "startTime": "Date",
+      "endTime": "Date",
+      "duration": "number",
+      "isActive": "boolean",
+      "createdAt": "Date"
+    },
+  
+    "systemLogs": {
+      "_id": "ObjectId",
+      "level": "string", // info, warn, error, debug
+      "service": "string", // auth, mood-analysis, content-rec, etc.
+      "message": "string",
+      "userId": "ObjectId (ref: users)",
+      "sessionId": "string",
+      "metadata": "Mixed",
+      "stack": "string",
+      "timestamp": "Date",
+      "resolved": "boolean",
+      "resolvedAt": "Date",
+      "resolvedBy": "string"
+    },
+  
+    "contentCache": {
+      "_id": "ObjectId",
+      "key": "string", // Unique cache key
+      "type": "string", // mood-content, user-recommendations, etc.
+      "data": "Mixed",
+      "metadata": {
+        "mood": "string",
+        "userId": "ObjectId",
+        "version": "string",
+        "size": "number"
+      },
+      "hitCount": "number",
+      "lastAccessed": "Date",
+      "createdAt": "Date",
+      "expiresAt": "Date"
+    }
+  }

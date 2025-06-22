@@ -111,6 +111,8 @@ class Metadata(BaseModel):
 class MoodAnalysis(BaseModel):
     id: Optional[str] = Field(default=None, alias="_id")
     userId: str = Field(alias="userId")
+    input: str = ""
+    context: dict = {}
     analysis: Analysis
     insights: Insights
     recommendations: Recommendations

@@ -158,7 +158,7 @@ class MoodAnalyzerAgent:
             print(f"JSON parsing error: {e}")
             raise
 
-    def _create_mood_analysis_model(self, parsed_result: Dict[str, Any], user_id: str) -> MoodAnalysis:
+    def _create_mood_analysis_model(self, parsed_result: Dict[str, Any], user_id: str, user_input: str, context: dict) -> MoodAnalysis:
         try:
             analysis_data = parsed_result.get("analysis", {})
             insights_data = parsed_result.get("insights", {})
@@ -242,6 +242,8 @@ class MoodAnalyzerAgent:
 
             return MoodAnalysis(
                 userId=user_id,
+                input=user_input,
+                context={},
                 analysis=analysis,
                 insights=insights,
                 recommendations=recommendations,
@@ -298,7 +300,7 @@ class MoodAnalyzerAgent:
                 print(f"Error getting content recommendations: {e}")
 
             db_info = {}
-            full_analysis_model = self._create_mood_analysis_model(parsed_result, user_id)
+            full_analysis_model = self._create_mood_analysis_model(parsed_result, user_id, user_input, context)
 
             if save_to_db and user_id:
                 try:

@@ -65,7 +65,8 @@ class MoodAnalyzerAgent:
                     "types": ["string"], // meditation, breathing exercises, motivational, educational, etc.
                     "keywords": ["string"], // at least 5 search keywords for relevant videos
                     "duration": "string", // short (0-10min), medium (10-30min), long (30min+)
-                    "mood": "string" // target mood for content
+                    "mood": "string" // target mood for content,
+                    "num_videos": number // exactly 6 videos
                 }},
                 "articles": {{
                     "topics": ["string"], // psychology, self-help, mindfulness, etc relevant to the analysis.
@@ -78,6 +79,7 @@ class MoodAnalyzerAgent:
                     "energy": number, // 0-1 (0=calm, 1=energetic)
                     "valence": number, // 0-1 (0=sad, 1=happy)
                     "mood": "string" // relaxing, uplifting, focus, etc relevant to the analysis.
+                    "num_playlists": number // exactly 6 playlists
                 }},
                 "meditation": {{
                     "types": ["string"], // breathing, body scan, loving-kindness, etc.
@@ -281,12 +283,12 @@ class MoodAnalyzerAgent:
                 
                 tasks = []
                 if youtube_rec:
-                    youtube_agent = get_agent("youtube_agent")
-                    tasks.append(asyncio.to_thread(youtube_agent.get_youtube_video, youtube_rec, 6))
+                    youtube_agent = get_agent("content_generator_agent")
+                    tasks.append(asyncio.to_thread(youtube_agent.run, "youtube", youtube_rec))
                 
                 if spotify_rec:
-                    spotify_agent = get_agent("spotify_agent")
-                    tasks.append(asyncio.to_thread(spotify_agent.get_spotify_recommendation, spotify_rec))
+                    spotify_agent = get_agent("content_generator_agent")
+                    tasks.append(asyncio.to_thread(spotify_agent.run, "spotify", spotify_rec))
 
                 if tasks:
                     recommendation_results = await asyncio.gather(*tasks)

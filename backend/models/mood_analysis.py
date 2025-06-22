@@ -45,8 +45,7 @@ class YouTubeRecommendation(BaseModel):
     keywords: List[str]
     duration: str
     mood: str
-    video: Optional[YouTubeVideo] = None
-
+    videos: Optional[List[Dict[str, Any]]] = []
 
 class ArticlesRecommendation(BaseModel):
     topics: List[str]
@@ -151,6 +150,17 @@ class MoodAnalysis(BaseModel):
             data_copy["userId"] = str(data_copy["userId"])
         return cls(**data_copy)
 
+    def to_simple_format(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "userId": self.userId,
+            "mood": self.analysis.primaryMood,
+            "score": self.analysis.confidence,
+            "analysis": self.insights.summary,
+            "recommendations": self.recommendations,
+            "createdAt": self.createdAt.isoformat()
+        }
+
 
 class MoodAnalysisRepository:
     def __init__(self, db=None):
@@ -159,7 +169,6 @@ class MoodAnalysisRepository:
 
     @property
     async def collection(self):
-        """Get collection with automatic initialization"""
         if self._collection is None:
             if self._db is None:
                 db = await get_database()
@@ -169,24 +178,20 @@ class MoodAnalysisRepository:
         return self._collection
 
     async def create(self, mood_analysis: MoodAnalysis) -> str:
-        """Create a new mood analysis"""
         doc = mood_analysis.to_mongo()
         result = await (await self.collection).insert_one(doc)
         return str(result.inserted_id)
 
     async def get_by_id(self, analysis_id: str) -> Optional[MoodAnalysis]:
-        """Get mood analysis by ID"""
         doc = await (await self.collection).find_one({"_id": ObjectId(analysis_id)})
         return MoodAnalysis.from_mongo(doc) if doc else None
 
     async def get_by_user_id(self, user_id: str, limit: int = 10) -> List[MoodAnalysis]:
-        """Get mood analyses for a user"""
         cursor = (await self.collection).find({"userId": ObjectId(user_id)}).sort("createdAt", -1).limit(limit)
         docs = await cursor.to_list(length=limit)
         return [MoodAnalysis.from_mongo(doc) for doc in docs]
 
     async def update(self, analysis_id: str, updates: Dict[str, Any]) -> bool:
-        """Update a mood analysis"""
         updates["updatedAt"] = datetime.utcnow()
         result = await (await self.collection).update_one(
             {"_id": ObjectId(analysis_id)},
@@ -195,24 +200,20 @@ class MoodAnalysisRepository:
         return result.modified_count > 0
 
     async def delete(self, analysis_id: str) -> bool:
-        """Delete a mood analysis"""
         result = await (await self.collection).delete_one({"_id": ObjectId(analysis_id)})
         return result.deleted_count > 0
 
     async def get_recent_analyses(self, limit: int = 20) -> List[MoodAnalysis]:
-        """Get recent mood analyses"""
         cursor = (await self.collection).find().sort("createdAt", -1).limit(limit)
         docs = await cursor.to_list(length=limit)
         return [MoodAnalysis.from_mongo(doc) for doc in docs]
 
     async def get_analyses_by_mood(self, mood: str, limit: int = 10) -> List[MoodAnalysis]:
-        """Get analyses by primary mood"""
         cursor = (await self.collection).find({"analysis.primaryMood": mood}).sort("createdAt", -1).limit(limit)
         docs = await cursor.to_list(length=limit)
         return [MoodAnalysis.from_mongo(doc) for doc in docs]
 
     async def get_user_mood_trends(self, user_id: str, days: int = 30) -> List[Dict[str, Any]]:
-        """Get mood trends for a user over specified days"""
         pipeline = [
             {"$match": {"userId": ObjectId(user_id)}},
             {"$match": {"createdAt": {"$gte": datetime.utcnow() - timedelta(days=days)}}},
@@ -227,7 +228,6 @@ class MoodAnalysisRepository:
         return await (await self.collection).aggregate(pipeline).to_list(None)
 
     async def get_analyses_by_date_range(self, user_id: str, start_date: datetime, end_date: datetime) -> List[MoodAnalysis]:
-        """Get analyses within a date range"""
         cursor = (await self.collection).find({
             "userId": ObjectId(user_id),
             "createdAt": {"$gte": start_date, "$lte": end_date}
@@ -236,7 +236,6 @@ class MoodAnalysisRepository:
         return [MoodAnalysis.from_mongo(doc) for doc in docs]
 
     async def get_high_risk_analyses(self, user_id: str) -> List[MoodAnalysis]:
-        """Get analyses with high risk assessment"""
         cursor = (await self.collection).find({
             "userId": ObjectId(user_id),
             "riskAssessment.level": {"$in": ["high", "medium"]}
@@ -245,7 +244,6 @@ class MoodAnalysisRepository:
         return [MoodAnalysis.from_mongo(doc) for doc in docs]
 
     async def get_analyses_by_time_of_day(self, user_id: str, time_of_day: str) -> List[MoodAnalysis]:
-        """Get analyses by time of day"""
         cursor = (await self.collection).find({
             "userId": ObjectId(user_id),
             "metadata.timeOfDay": time_of_day

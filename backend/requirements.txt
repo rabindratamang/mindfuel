@@ -148,7 +148,8 @@ typing-inspection==0.4.1
 typing_extensions==4.14.0
 urllib3==2.4.0
 uvicorn==0.34.3
-uvloop==0.21.0
+# only install uvloop on non-Windows
+uvloop; sys_platform != "win32"
 watchfiles==1.0.5
 wcwidth==0.2.13
 websocket-client==1.8.0

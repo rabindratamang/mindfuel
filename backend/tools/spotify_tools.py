@@ -17,12 +17,17 @@ def get_spotify_token(client_id: str, client_secret: str) -> str:
     return response.json()['access_token']
 
 
-@tool
-def search_spotify_playlists(query: str) -> dict:
+@tool(return_direct=True)
+def search_spotify_playlists(query: str, num_playlists: int = 6) -> dict:
     """
     Search for Spotify playlists using a keyword (e.g., "sleep", "meditation").
 
-    Returns a JSON object with the top 6 playlists including name, description, image, link, owner, and track count.
+    Args:
+        query (str): The search query.
+        num_playlists (int): The number of playlists to return (default: 6).
+
+    Returns:
+        dict: A dictionary containing playlist details.
     """
     client_id = settings.SPOTIFY_CLIENT_ID
     client_secret = settings.SPOTIFY_CLIENT_SECRET
@@ -35,7 +40,7 @@ def search_spotify_playlists(query: str) -> dict:
         params = {
             'q': query,
             'type': 'playlist',
-            'limit': 6
+            'limit': num_playlists
         }
         url = 'https://api.spotify.com/v1/search'
         response = requests.get(url, headers=headers, params=params)

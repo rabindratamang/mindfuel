@@ -1,0 +1,103 @@
+{
+  "id": "8ae78e2f-f7ab-467f-8a8c-cd56cf91d7aa",
+  "name": "AgentExecutor",
+  "start_time": "2025-06-22 17:48:21.105084",
+  "run_type": "chain",
+  "end_time": "2025-06-22 17:48:54.431846",
+  "extra": {
+    "runtime": {
+      "sdk": "langsmith-py",
+      "sdk_version": "0.3.45",
+      "library": "langchain-core",
+      "platform": "Linux-6.11.0-26-generic-x86_64-with-glibc2.39",
+      "runtime": "python",
+      "py_implementation": "CPython",
+      "runtime_version": "3.12.3",
+      "langchain_version": "0.3.25",
+      "langchain_core_version": "0.3.64",
+      "library_version": "0.3.64"
+    },
+    "metadata": {
+      "LANGSMITH_TRACING": "true",
+      "LANGSMITH_ENDPOINT": "https://api.smith.langchain.com",
+      "LANGSMITH_PROJECT": "mindfuel",
+      "revision_id": "e80fd70-dirty",
+      "ls_run_depth": 0
+    }
+  },
+  "error": null,
+  "serialized": null,
+  "events": [
+    {
+      "name": "start",
+      "time": "2025-06-22T17:48:21.105084+00:00"
+    },
+    {
+      "name": "end",
+      "time": "2025-06-22T17:48:54.431846+00:00"
+    }
+  ],
+  "inputs": {
+    "input": "Find 6 YouTube videos that includes the following:\n- Types: meditation, breathing exercises\n- Keywords: sleep meditation, guided sleep, relaxation techniques, insomnia help, sleep music\n- Mood: Calm\n- Duration: medium (e.g., 0-10min=short, 10-30min=medium, 30min+=long)\n\nOnly return array of JSON with: title, video_url, duration_seconds, thumbnail, and channel details. even if there is only one videoDo not include any commentary or explanation outside the JSON array. Only return valid JSON array. Example do not wrap it in ```json or any markdown formatting"
+  },
+  "outputs": {
+    "output": "[\n    {\n        \"title\": \"Guided Meditation for Sleep Problems and Insomnia with Hypnosis\",\n        \"video_url\": \"https://www.youtube.com/watch?v=63vw6fUVhBQ\",\n        \"duration_seconds\": 28855,\n        \"thumbnail\": \"https://i.ytimg.com/vi/63vw6fUVhBQ/hqdefault.jpg\",\n        \"channel\": {\n            \"title\": \"John Moyer\",\n            \"channel_id\": \"UCplENmIrdL3QtCb7cO-Qp7w\",\n            \"avatar\": \"https://yt3.ggpht.com/ytc/AIdro_nBbGdvXg4t7ayXMi3jHDKSqPIrrKYvg489hexrxoaxZ3s=s240-c-k-c0x00ffffff-no-rj\",\n            \"channel_url\": \"https://www.youtube.com/channel/UCplENmIrdL3QtCb7cO-Qp7w\"\n        }\n    },\n    {\n        \"title\": \"Fall Asleep In MINUTES! Sleep Talk-Down Guided Meditation Hypnosis for Sleeping\",\n        \"video_url\": \"https://www.youtube.com/watch?v=U6Ay9v7gK9w\",\n        \"duration_seconds\": 10801,\n        \"thumbnail\": \"https://i.ytimg.com/vi/U6Ay9v7gK9w/hqdefault.jpg\",\n        \"channel\": {\n            \"title\": \"Jason Stephenson - Guided Sleep Meditation \",\n            \"channel_id\": \"UCqPYhcdFgrlUXiGmPRAej1w\",\n            \"avatar\": \"https://yt3.ggpht.com/a2O8Y3JoH7FvwpByzOokUFNiqM9QvG3hbXB6TTzP6omedDuA98bfxvuqN9RPDJkLWFcIYmgf=s240-c-k-c0x00ffffff-no-rj\",\n            \"channel_url\": \"https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w\"\n        }\n    },\n    {\n        \"title\": \"Sleep Hypnosis (Very Powerful) – Deep & Restful Sleep in Just a Few Minutes\",\n        \"video_url\": \"https://www.youtube.com/watch?v=tEaXFI3jNpY\",\n        \"duration_seconds\": 8542,\n        \"thumbnail\": \"https://i.ytimg.com/vi/tEaXFI3jNpY/hqdefault.jpg\",\n        \"channel\": {\n            \"title\": \"Mindrest\",\n            \"channel_id\": \"UCWHbt32ErfJoVO-rr4lAn6Q\",\n            \"avatar\": \"https://yt3.ggpht.com/1pMYDwjLeBUtpVp3UQOJ5jJaQCOZ_HHwH_jgQt_G_j5QtG-mvwtyqrmngTsa6oy_7ooNvS9k=s240-c-k-c0x00ffffff-no-rj\",\n            \"channel_url\": \"https://www.youtube.com/channel/UCWHbt32ErfJoVO-rr4lAn6Q\"\n        }\n    },\n    {\n        \"title\": \"Equal Breathing Exercise for Sleep\",\n        \"video_url\": \"https://www.youtube.com/watch?v=4wEDoKm40Yc\",\n        \"duration_seconds\": 1200,\n        \"thumbnail\": \"https://i.ytimg.com/vi/4wEDoKm40Yc/hqdefault.jpg\",\n        \"channel\": {\n            \"title\": \"Fitbit\",\n            \"channel_id\": \"UCzqcfJjCO5C1zUmnxFRGvzg\",\n            \"avatar\": \"https://yt3.ggpht.com/ytc/AIdro_lpXIWrbkBIjBmvg7Z6QPUHFz4jmRnz8oee3DIsJp4XCck=s240-c-k-c0x00ffffff-no-rj\",\n            \"channel_url\": \"https://www.youtube.com/channel/UCzqcfJjCO5C1zUmnxFRGvzg\"\n        }\n    },\n    {\n        \"title\": \"Breathing Exercises to Relax or Fall Asleep Fast | 478 Mindfulness Breathing | TAKE A DEEP BREATH\",\n        \"video_url\": \"https://www.youtube.com/watch?v=j-1n3KJR1I8\",\n        \"duration_seconds\": 341,\n        \"thumbnail\": \"https://i.ytimg.com/vi/j-1n3KJR1I8/hqdefault.jpg\",\n        \"channel\": {\n            \"title\": \"TAKE A DEEP BREATH\",\n            \"channel_id\": \"UCWOqu6Q-gWkkRqO-8PTshmA\",\n            \"avatar\": \"https://yt3.ggpht.com/mF9CALMYhLfvJzdsIjtBAUpnIpF4ZohXnxadP3fEvSSFQJgcFKg6Q0oxjDTrQ_e54SvZ1nYHCKc=s240-c-k-c0x00ffffff-no-rj\",\n            \"channel_url\": \"https://www.youtube.com/channel/UCWOqu6Q-gWkkRqO-8PTshmA\"\n        }\n    },\n    {\n        \"title\": \"4-7-8 Calm Breathing Exercise | 10 Minutes of Deep Relaxation | Anxiety Relief | Pranayama Exercise\",\n        \"video_url\": \"https://www.youtube.com/watch?v=LiUnFJ8P4gM\",\n        \"duration_seconds\": 633,\n        \"thumbnail\": \"https://i.ytimg.com/vi/LiUnFJ8P4gM/hqdefault.jpg\",\n        \"channel\": {\n            \"title\": \"Hands-On Meditation\",\n            \"channel_id\": \"UCbQ44rCuJDlezDk9GmO0r7g\",\n            \"avatar\": \"https://yt3.ggpht.com/Cazeko4qDgJx1jhtowKCPVkV9cZHCPUSjme6jyvg9GuQZzvhQrEoKyvPTdm2FNKorbDb2ESY=s240-c-k-c0x00ffffff-no-rj\",\n            \"channel_url\": \"https://www.youtube.com/channel/UCbQ44rCuJDlezDk9GmO0r7g\"\n        }\n    }\n]"
+  },
+  "reference_example_id": null,
+  "parent_run_id": null,
+  "tags": [],
+  "attachments": {},
+  "session_id": "4903534f-c08e-4584-be22-d27b53d7bedf",
+  "child_run_ids": [
+    "327cb418-648c-4550-b991-451fe1695f23",
+    "e6e0d6dc-c546-4525-919b-d31f9b9455e1",
+    "259fef4c-6ea8-4db9-a5d7-90b051e0e351",
+    "56dacc4c-572d-4202-bfa8-53feb82a49d7",
+    "10c3792b-db70-41f2-96e1-4a0d90a4c561",
+    "eb818f72-bcb9-4cb3-a343-4e109a522fa8",
+    "34899923-1587-4b07-be81-f92135547f85",
+    "bc8b558f-8a56-4af0-af4c-fb8edc46b27d",
+    "34469116-9b1d-440d-b317-dd7f40e187df",
+    "39093081-cedf-4f22-acf6-e94d02ad8753",
+    "3e76cb4c-12dd-49df-af7a-23b98adad012",
+    "8e1494f0-ed4f-45f9-a137-b6927db3a0bd",
+    "891a2e31-c020-4f3a-8fed-5d27687014d4",
+    "7c2640ad-4f66-4af2-8eeb-8a4a6a7e6494",
+    "f19fd90e-6ea8-4612-97bd-1db8ad03c9a2",
+    "7efc1f85-7983-4659-8e78-cf640088dcba",
+    "5bca7cb7-08db-4509-8433-23f247c0fff4",
+    "817389ad-2b5e-40a0-b342-b23339f7b098",
+    "8328745e-2a2b-4f22-bc6b-2c8dd2ef9872",
+    "7b41383e-0ca6-4973-bce2-1201b8ae2d42",
+    "5d7bc87a-547b-44a4-8c06-8ad98c717d4c",
+    "d88595e5-e0ff-4e8a-8848-664c198d5ccc",
+    "901f879f-6fe5-4878-9a7e-db0cc3ccd4bd",
+    "099a6de9-9a92-4c94-9e9a-89dc72c2df4f"
+  ],
+  "child_runs": null,
+  "feedback_stats": null,
+  "app_path": "/o/8562cb79-4098-46cb-af08-f45db78c3ad5/projects/p/4903534f-c08e-4584-be22-d27b53d7bedf/r/8ae78e2f-f7ab-467f-8a8c-cd56cf91d7aa?trace_id=8ae78e2f-f7ab-467f-8a8c-cd56cf91d7aa&start_time=2025-06-22T17:48:21.105084",
+  "manifest_id": null,
+  "status": "success",
+  "prompt_tokens": 930,
+  "completion_tokens": 1381,
+  "total_tokens": 2311,
+  "prompt_token_details": null,
+  "completion_token_details": null,
+  "first_token_time": "2025-06-22 17:48:22.275125",
+  "total_cost": "0.0009681",
+  "prompt_cost": "0.0001395",
+  "completion_cost": "0.0008286",
+  "prompt_cost_details": null,
+  "completion_cost_details": null,
+  "parent_run_ids": [],
+  "trace_id": "8ae78e2f-f7ab-467f-8a8c-cd56cf91d7aa",
+  "dotted_order": "20250622T174821105084Z8ae78e2f-f7ab-467f-8a8c-cd56cf91d7aa",
+  "in_dataset": false,
+  "export_info": {
+    "exported_at": "2025-06-22T17:51:50.972634",
+    "run_id": "8ae78e2f-f7ab-467f-8a8c-cd56cf91d7aa",
+    "export_version": "1.0",
+    "include_metadata": true
+  }
+}

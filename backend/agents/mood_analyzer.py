@@ -8,7 +8,6 @@ from typing import Dict, Any, Optional
 import asyncio
 
 from models.mood_analysis import MoodAnalysis, MoodAnalysisRepository, Analysis, Insights, Recommendations, FollowUp, RiskAssessment, Metadata, Emotion, Sentiment, ContentRecommendations, YouTubeRecommendation, ArticlesRecommendation, SpotifyRecommendation, MeditationRecommendation
-from models.mood_analysis_simple import MoodAnalysisSimple, MoodAnalysisSimpleRepository
 from database.mongo_client import get_database, init_database
 
 class MoodAnalyzerAgent:
@@ -60,24 +59,25 @@ class MoodAnalyzerAgent:
                 "concerns": ["string"] // Areas that might need attention
             }},
             "recommendations": {{
-                "immediate": ["string"], // 3-4 immediate actionable suggestions
+                "immediate": ["string"], // 6 immediate actionable suggestions
                 "content": {{
                 "youtube": {{
                     "types": ["string"], // meditation, breathing exercises, motivational, educational, etc.
-                    "keywords": ["string"], // search keywords for relevant videos
+                    "keywords": ["string"], // at least 5 search keywords for relevant videos
                     "duration": "string", // short (0-10min), medium (10-30min), long (30min+)
                     "mood": "string" // target mood for content
                 }},
                 "articles": {{
-                    "topics": ["string"], // psychology, self-help, mindfulness, etc.
+                    "topics": ["string"], // psychology, self-help, mindfulness, etc relevant to the analysis.
                     "difficulty": "string", // beginner, intermediate, advanced
-                    "focus": ["string"] // coping strategies, understanding emotions, etc.
+                    "focus": ["string"] // coping strategies, understanding emotions, etc relevant to the analysis.
                 }},
                 "spotify": {{
-                    "genres": ["string"], // ambient, classical, nature sounds, etc.
+                    "keywords": ["string"], // at least 5 search keywords for relevant playlists
+                    "genres": ["string"], // ambient, classical, nature sounds, podcast etc relevant to the analysis.
                     "energy": number, // 0-1 (0=calm, 1=energetic)
                     "valence": number, // 0-1 (0=sad, 1=happy)
-                    "mood": "string" // relaxing, uplifting, focus, etc.
+                    "mood": "string" // relaxing, uplifting, focus, etc relevant to the analysis.
                 }},
                 "meditation": {{
                     "types": ["string"], // breathing, body scan, loving-kindness, etc.
@@ -193,7 +193,8 @@ class MoodAnalyzerAgent:
                     types=content_data.get("youtube", {}).get("types", []),
                     keywords=content_data.get("youtube", {}).get("keywords", []),
                     duration=content_data.get("youtube", {}).get("duration", "medium"),
-                    mood=content_data.get("youtube", {}).get("mood", "calm")
+                    mood=content_data.get("youtube", {}).get("mood", "calm"),
+                    videos=content_data.get("youtube", {}).get("videos", None)
                 ),
                 articles=ArticlesRecommendation(
                     topics=content_data.get("articles", {}).get("topics", []),
@@ -204,7 +205,8 @@ class MoodAnalyzerAgent:
                     genres=content_data.get("spotify", {}).get("genres", []),
                     energy=content_data.get("spotify", {}).get("energy", 0.5),
                     valence=content_data.get("spotify", {}).get("valence", 0.5),
-                    mood=content_data.get("spotify", {}).get("mood", "relaxing")
+                    mood=content_data.get("spotify", {}).get("mood", "relaxing"),
+                    playlist=content_data.get("spotify", {}).get("playlist", None)
                 ),
                 meditation=MeditationRecommendation(
                     types=content_data.get("meditation", {}).get("types", []),
@@ -252,32 +254,7 @@ class MoodAnalyzerAgent:
             print(f"Error creating MoodAnalysis model: {e}")
             raise
 
-    def _create_simple_mood_analysis(self, parsed_result: Dict[str, Any], user_id: str) -> MoodAnalysisSimple:
-        analysis_data = parsed_result.get("analysis", {})
-        insights_data = parsed_result.get("insights", {})
-        recommendations_data = parsed_result.get("recommendations", {})
-
-        return MoodAnalysisSimple(
-            userId=user_id,
-            mood=analysis_data.get("primaryMood", "Neutral"),
-            score=analysis_data.get("confidence", 50),
-            analysis=insights_data.get("summary", "Analysis completed"),
-            suggestions=recommendations_data.get("immediate", [])
-        )
-
     async def run(self, user_input: str, user_id: str = None, context: str = None, save_to_db: bool = True) -> Dict[str, Any]:
-        """
-        Run mood analysis and optionally save to database
-        
-        Args:
-            user_input: User's text input
-            user_id: User ID for database storage
-            context: Additional context
-            save_to_db: Whether to save results to database
-            
-        Returns:
-            Dictionary with analysis results and database info
-        """
         try:
             context_str = """
                 - MindFuel is a mental wellness app that helps users track mood, get personalized content recommendations, and improve mental health
@@ -291,11 +268,9 @@ class MoodAnalyzerAgent:
                 "input": user_input,
             }
 
-            # Get AI analysis by running the blocking invoke call in a separate thread
             result = await asyncio.to_thread(self.chain.invoke, prompt_vars)
             parsed_result = self._parse_ai_response(result)
 
-            # Get content recommendations in parallel
             try:
                 from agents import get_agent
                 
@@ -305,7 +280,7 @@ class MoodAnalyzerAgent:
                 tasks = []
                 if youtube_rec:
                     youtube_agent = get_agent("youtube_agent")
-                    tasks.append(asyncio.to_thread(youtube_agent.get_youtube_video, youtube_rec))
+                    tasks.append(asyncio.to_thread(youtube_agent.get_youtube_video, youtube_rec, 6))
                 
                 if spotify_rec:
                     spotify_agent = get_agent("spotify_agent")
@@ -315,45 +290,34 @@ class MoodAnalyzerAgent:
                     recommendation_results = await asyncio.gather(*tasks)
                     
                     if youtube_rec:
-                        parsed_result["recommendations"]["content"]["youtube"]["video"] = recommendation_results.pop(0)
+                        parsed_result["recommendations"]["content"]["youtube"]["videos"] = recommendation_results.pop(0)
                     if spotify_rec:
                         parsed_result["recommendations"]["content"]["spotify"]["playlist"] = recommendation_results.pop(0)
 
             except Exception as e:
                 print(f"Error getting content recommendations: {e}")
 
-            # Save to database if requested
             db_info = {}
+            full_analysis_model = self._create_mood_analysis_model(parsed_result, user_id)
+
             if save_to_db and user_id:
                 try:
                     await init_database()
-                    db = await get_database()
                     
-                    full_repo = MoodAnalysisRepository(db)
-                    full_analysis = self._create_mood_analysis_model(parsed_result, user_id)
-                    full_analysis_id = await full_repo.create(full_analysis)
-                    
-                    simple_repo = MoodAnalysisSimpleRepository(db)
-                    simple_analysis = self._create_simple_mood_analysis(parsed_result, user_id)
-                    simple_analysis_id = await simple_repo.create(simple_analysis)
+                    full_repo = MoodAnalysisRepository()
+                    full_analysis_id = await full_repo.create(full_analysis_model)
                     
                     db_info = {
                         "full_analysis_id": full_analysis_id,
-                        "simple_analysis_id": simple_analysis_id,
                         "saved": True
                     }
                 except Exception as e:
                     print(f"Error saving to database: {e}")
                     db_info = {"saved": False, "error": str(e)}
-
+        
             return {
                 "analysis": parsed_result,
-                "frontend_format": {
-                    "mood": parsed_result.get("analysis", {}).get("primaryMood", "Neutral"),
-                    "score": parsed_result.get("analysis", {}).get("confidence", 50),
-                    "analysis": parsed_result.get("insights", {}).get("summary", "Analysis completed"),
-                    "suggestions": parsed_result.get("recommendations", {}).get("immediate", [])
-                },
+                "frontend_format": full_analysis_model.from_mongo(full_analysis_model.to_mongo()),
                 "database": db_info
             }
 
@@ -364,18 +328,16 @@ class MoodAnalyzerAgent:
     async def get_user_analyses(self, user_id: str, limit: int = 10, simple: bool = True) -> Dict[str, Any]:
         try:
             await init_database()
-            db = await get_database()
+            
+            repo = MoodAnalysisRepository()
+            analyses = await repo.get_by_user_id(user_id, limit)
             
             if simple:
-                repo = MoodAnalysisSimpleRepository(db)
-                analyses = await repo.get_by_user_id(user_id, limit)
                 return {
-                    "analyses": [analysis.dict() for analysis in analyses],
+                    "analyses": [analysis.to_simple_format() for analysis in analyses],
                     "type": "simple"
                 }
             else:
-                repo = MoodAnalysisRepository(db)
-                analyses = await repo.get_by_user_id(user_id, limit)
                 return {
                     "analyses": [analysis.dict() for analysis in analyses],
                     "type": "full"

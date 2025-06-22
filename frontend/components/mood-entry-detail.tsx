@@ -55,7 +55,7 @@ export function MoodEntryDetail({ entry, onBack, onContentClick }: MoodEntryDeta
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 p-6">
+    <div className="max-w-7xl mx-auto space-y-6 px-4 lg:px-6">
       {/* Clean Header */}
       <div className="space-y-4">
         <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">

@@ -8,7 +8,7 @@ MindFuel is a multi-agent AI system designed to support mental fitness through p
 ## Core Agents & Responsibilities
 | Agent               | Responsibilities                                                      | Tools/APIs Used                                  |
 |---------------------|-----------------------------------------------------------------------|--------------------------------------------------|
-| Mood Analyzer       | Detects stress/anxiety from text/voice, suggests coping strategies    | Hugging Face, OpenAI GPT-4                       |
+| Mood Analyzer       | Detects stress/anxiety from text/voice, suggests coping strategies    | OpenAI GPT-40-mini, Youtube Agent, Spotify Agent                       |
 | Sleep Coach         | Personalized wind-down routines, sleep tracking                       | ChromaDB (RAG), Spotify API, PubMed              |
 | Meditation          | Guided meditations, journaling prompts                                | ElevenLabs (TTS), Notion API, GPT-4              |
 | Reminder            | Schedules check-ins, hydration, bedtime alerts                        | Google Calendar API, Twilio, Telegram            |

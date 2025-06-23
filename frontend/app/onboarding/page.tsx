@@ -212,9 +212,22 @@ export default function OnboardingPage() {
 
       if (response.ok) {
         const result = await response.json()
+        console.log("Onboarding response:", result) // Debug log
+
+        // Update tokens if provided
+        if (result.tokens) {
+          const { authService } = await import("@/lib/auth")
+          authService.setTokens(result.tokens)
+          console.log("Updated tokens after onboarding") // Debug log
+        }
+
+        // Update the auth context with the new user data
         if (result.user) {
           setUser(result.user)
+          console.log("Updated auth user with onboarding data:", result.user) // Debug log
         }
+
+        // Redirect to dashboard
         router.push("/dashboard")
       } else {
         console.error("Failed to save onboarding data")

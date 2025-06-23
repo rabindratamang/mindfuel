@@ -3,7 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 from models.user import User, UserRepository, UserInDB, Preferences, Goal
-from core.security import get_current_user
+from core.security import get_current_user, create_access_token, create_refresh_token
 
 router = APIRouter()
 user_repository = UserRepository()
@@ -203,7 +203,29 @@ async def complete_onboarding(
         raise HTTPException(status_code=500, detail="Failed to update user profile with onboarding data")
 
     updated_user = await user_repository.get_user_for_response(current_user_info["user"].id)
+    
+    access_token = create_access_token({
+        "sub": updated_user.id,
+        "email": updated_user.email,
+        "firstName": updated_user.firstName,
+        "lastName": updated_user.lastName,
+        "isOnboardComplete": updated_user.isOnboardComplete 
+    })
+    refresh_token = create_refresh_token({
+        "sub": updated_user.id,
+        "email": updated_user.email
+    })
+    
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found after update")
         
-    return {"message": "Onboarding completed successfully", "user": updated_user.model_dump(by_alias=True)} 
+        
+    return {
+        "message": "Onboarding completed successfully", 
+        "user": updated_user.model_dump(by_alias=True), 
+        "tokens": {
+            "accessToken": access_token,
+            "refreshToken": refresh_token,
+            "tokenType": "bearer"
+        }
+    } 

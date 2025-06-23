@@ -15,11 +15,17 @@ import { apiClient } from "@/lib/api-client"
 
 interface Message {
   id: string
+  chatId: string
   content: string
   sender: "user" | "ai"
   timestamp: Date
   mood?: string
   suggestions?: string[]
+  resources?: Array<{
+    title: string
+    type: "video" | "article" | "playlist"
+    url: string
+  }>
 }
 
 interface ChatResponse {
@@ -34,20 +40,54 @@ interface ChatResponse {
 }
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      content:
-        "Hello! I'm MindFuel AI, your compassionate mental wellness companion. I'm here to listen, support, and guide you on your journey to better mental health. How are you feeling today? 💙",
-      sender: "ai",
-      timestamp: new Date(),
-    },
-  ])
+  const [chatId, setChatId] = useState<string>("")
+  const [isInitializing, setIsInitializing] = useState(true)
+  const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    initializeChat()
+  }, [])
+
+  const initializeChat = async () => {
+    try {
+      setIsInitializing(true)
+      const response = await apiClient.post<{ chatId: string }>("/chat/initialize")
+      setChatId(response.chatId)
+
+      setMessages([
+        {
+          id: "welcome",
+          chatId: response.chatId,
+          content:
+            "Hello! I'm MindFuel AI, your compassionate mental wellness companion. I'm here to listen, support, and guide you on your journey to better mental health. How are you feeling today? 💙",
+          sender: "ai",
+          timestamp: new Date(),
+        },
+      ])
+    } catch (error) {
+      console.error("Failed to initialize chat:", error)
+      // Fallback to local chatId
+      const fallbackChatId = `chat_${Date.now()}`
+      setChatId(fallbackChatId)
+      setMessages([
+        {
+          id: "welcome",
+          chatId: fallbackChatId,
+          content:
+            "Hello! I'm MindFuel AI, your compassionate mental wellness companion. I'm here to listen, support, and guide you on your journey to better mental health. How are you feeling today? 💙",
+          sender: "ai",
+          timestamp: new Date(),
+        },
+      ])
+    } finally {
+      setIsInitializing(false)
+    }
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -58,10 +98,11 @@ export default function ChatPage() {
   }, [messages])
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return
+    if (!inputValue.trim() || isLoading || !chatId) return
 
     const userMessage: Message = {
       id: Date.now().toString(),
+      chatId: chatId,
       content: inputValue.trim(),
       sender: "user",
       timestamp: new Date(),
@@ -73,21 +114,24 @@ export default function ChatPage() {
     setIsTyping(true)
 
     try {
-      // Simulate typing delay
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      const response = await apiClient.post<ChatResponse>("/chat", {
+      const response = await apiClient.post<ChatResponse>(`/chat/${chatId}/message`, {
         message: userMessage.content,
         context: {
           recentMessages: messages.slice(-5).map((m) => ({
             content: m.content,
             sender: m.sender,
+            mood: m.mood || "",
+            suggestions: m.suggestions || [],
+            resources: m.resources || [],
           })),
         },
       })
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
+        chatId: chatId,
         content: response.message,
         sender: "ai",
         timestamp: new Date(),
@@ -100,6 +144,7 @@ export default function ChatPage() {
       console.error("Chat error:", error)
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
+        chatId: chatId,
         content:
           "I apologize, but I'm having trouble connecting right now. Please try again in a moment. If you're in crisis, please reach out to the 988 Suicide & Crisis Lifeline or your local emergency services. 💙",
         sender: "ai",
@@ -122,6 +167,17 @@ export default function ChatPage() {
   const handleSuggestionClick = (suggestion: string) => {
     setInputValue(suggestion)
     textareaRef.current?.focus()
+  }
+
+  if (isInitializing) {
+    return (
+      <div className="h-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-teal-50/30 dark:from-slate-950 dark:via-blue-950/30 dark:to-teal-950/30">
+        <div className="text-center space-y-4">
+          <AnimatedIcon icon={Brain} hoverEffect="pulse" color="#14b8a6" size={48} />
+          <p className="text-slate-600 dark:text-slate-400">Initializing your chat session...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

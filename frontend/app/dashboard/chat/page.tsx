@@ -1,8 +1,7 @@
 "use client"
-
+import { useState, useRef, useEffect } from "react"
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Send, User, Heart, Brain, Sparkles, AlertCircle, ThumbsUp, Copy, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -55,7 +54,10 @@ function MarkdownText({ content }: { content: string }) {
       // Headers
       if (line.startsWith("### ")) {
         elements.push(
-          <h3 key={index} className="text-lg font-semibold mt-3 mb-2 text-teal-600 dark:text-teal-400">
+          <h3
+            key={index}
+            className="text-base sm:text-lg font-semibold mt-2 sm:mt-3 mb-1 sm:mb-2 text-teal-600 dark:text-teal-400"
+          >
             {line.replace("### ", "")}
           </h3>,
         )
@@ -64,7 +66,10 @@ function MarkdownText({ content }: { content: string }) {
 
       if (line.startsWith("## ")) {
         elements.push(
-          <h2 key={index} className="text-xl font-bold mt-4 mb-2 text-teal-700 dark:text-teal-300">
+          <h2
+            key={index}
+            className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 sm:mb-2 text-teal-700 dark:text-teal-300"
+          >
             {line.replace("## ", "")}
           </h2>,
         )
@@ -74,9 +79,9 @@ function MarkdownText({ content }: { content: string }) {
       // Lists
       if (line.startsWith("- ") || line.startsWith("* ")) {
         elements.push(
-          <div key={index} className="flex items-start gap-2 my-1">
-            <span className="text-teal-500 mt-1">•</span>
-            <span>{parseInlineMarkdown(line.replace(/^[-*] /, ""))}</span>
+          <div key={index} className="flex items-start gap-1 sm:gap-2 my-0.5 sm:my-1">
+            <span className="text-teal-500 mt-0.5 sm:mt-1 text-xs sm:text-sm">•</span>
+            <span className="text-xs sm:text-sm">{parseInlineMarkdown(line.replace(/^[-*] /, ""))}</span>
           </div>,
         )
         return
@@ -86,9 +91,9 @@ function MarkdownText({ content }: { content: string }) {
       if (/^\d+\. /.test(line)) {
         const number = line.match(/^(\d+)\. /)?.[1]
         elements.push(
-          <div key={index} className="flex items-start gap-2 my-1">
-            <span className="text-teal-500 font-medium min-w-[20px]">{number}.</span>
-            <span>{parseInlineMarkdown(line.replace(/^\d+\. /, ""))}</span>
+          <div key={index} className="flex items-start gap-1 sm:gap-2 my-0.5 sm:my-1">
+            <span className="text-teal-500 font-medium min-w-[16px] sm:min-w-[20px] text-xs sm:text-sm">{number}.</span>
+            <span className="text-xs sm:text-sm">{parseInlineMarkdown(line.replace(/^\d+\. /, ""))}</span>
           </div>,
         )
         return
@@ -96,7 +101,7 @@ function MarkdownText({ content }: { content: string }) {
 
       // Regular paragraphs
       elements.push(
-        <p key={index} className="my-2">
+        <p key={index} className="my-1 sm:my-2 text-xs sm:text-sm">
           {parseInlineMarkdown(line)}
         </p>,
       )
@@ -376,12 +381,12 @@ export default function ChatPage() {
 
       {/* Header */}
       <motion.div
-        className="flex-shrink-0 p-4 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm relative z-10"
+        className="flex-shrink-0 p-2 sm:p-4 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm relative z-10"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="relative">
             <motion.div
               animate={{
@@ -394,24 +399,24 @@ export default function ChatPage() {
                 ease: "easeInOut",
               }}
             >
-              <AnimatedIcon icon={Brain} hoverEffect="pulse" color="#14b8a6" size={32} />
+              <AnimatedIcon icon={Brain} hoverEffect="pulse" color="#14b8a6" size={24} className="sm:w-8 sm:h-8" />
             </motion.div>
             <motion.div
-              className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
+              className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"
               animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
               transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
             />
           </div>
           <div>
             <motion.h1
-              className="text-xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
+              className="text-lg sm:text-xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent"
               animate={{ backgroundPosition: ["0%", "100%", "0%"] }}
               transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
             >
               MindFuel AI
             </motion.h1>
             <motion.p
-              className="text-sm text-slate-600 dark:text-slate-400"
+              className="text-xs sm:text-sm text-slate-600 dark:text-slate-400"
               animate={{ opacity: [0.7, 1, 0.7] }}
               transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
             >
@@ -423,7 +428,7 @@ export default function ChatPage() {
 
       {/* Crisis Alert */}
       <motion.div
-        className="flex-shrink-0 p-4 relative z-10"
+        className="flex-shrink-0 p-2 sm:p-4 relative z-10"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -434,8 +439,8 @@ export default function ChatPage() {
             animate={{ x: ["-100%", "100%"] }}
             transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
           />
-          <AlertCircle className="h-4 w-4 text-amber-600 relative z-10" />
-          <AlertDescription className="text-sm text-amber-800 dark:text-amber-200 relative z-10">
+          <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-amber-600 relative z-10" />
+          <AlertDescription className="text-xs sm:text-sm text-amber-800 dark:text-amber-200 relative z-10">
             <strong>Crisis Support:</strong> If you're having thoughts of self-harm, please call{" "}
             <a href="tel:988" className="font-semibold underline hover:no-underline">
               988
@@ -446,7 +451,7 @@ export default function ChatPage() {
       </motion.div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 relative z-10">
+      <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-4 relative z-10">
         <AnimatePresence mode="popLayout">
           {messages.map((message, index) => (
             <motion.div
@@ -465,13 +470,13 @@ export default function ChatPage() {
               className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               <motion.div
-                className={`flex gap-3 max-w-[85%] ${message.sender === "user" ? "flex-row-reverse" : ""}`}
+                className={`flex gap-2 sm:gap-3 max-w-[95%] sm:max-w-[85%] ${message.sender === "user" ? "flex-row-reverse" : ""}`}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
                 {/* Avatar */}
                 <motion.div
-                  className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                  className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                     message.sender === "user"
                       ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
                       : "bg-gradient-to-br from-teal-500 to-blue-500 text-white"
@@ -479,18 +484,22 @@ export default function ChatPage() {
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {message.sender === "user" ? <User size={18} /> : <Brain size={18} />}
+                  {message.sender === "user" ? (
+                    <User size={14} className="sm:w-[18px] sm:h-[18px]" />
+                  ) : (
+                    <Brain size={14} className="sm:w-[18px] sm:h-[18px]" />
+                  )}
                 </motion.div>
 
                 {/* Message Content */}
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   <motion.div
                     initial={{ opacity: 0, x: message.sender === "user" ? 20 : -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ delay: 0.1 }}
                   >
                     <Card
-                      className={`p-4 relative overflow-hidden ${
+                      className={`p-3 sm:p-4 relative overflow-hidden ${
                         message.sender === "user"
                           ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-500 shadow-lg"
                           : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-shadow"
@@ -505,7 +514,7 @@ export default function ChatPage() {
                         />
                       )}
 
-                      <div className="text-sm leading-relaxed">
+                      <div className="text-xs sm:text-sm leading-relaxed">
                         {message.sender === "ai" ? (
                           <MarkdownText content={message.content} />
                         ) : (
@@ -515,7 +524,7 @@ export default function ChatPage() {
 
                       {message.mood && (
                         <motion.div
-                          className="mt-3"
+                          className="mt-2 sm:mt-3"
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.3 }}
@@ -528,17 +537,17 @@ export default function ChatPage() {
                               animate={{ scale: [1, 1.2, 1] }}
                               transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                             >
-                              <Heart size={12} className="mr-1" />
+                              <Heart size={10} className="mr-1 sm:w-3 sm:h-3" />
                             </motion.div>
                             Detected mood: {message.mood}
                           </Badge>
                         </motion.div>
                       )}
 
-                      {/* Message Actions */}
+                      {/* Message Actions - Hide on mobile */}
                       {message.sender === "ai" && (
                         <motion.div
-                          className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="hidden sm:flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity"
                           initial={{ opacity: 0 }}
                           whileHover={{ opacity: 1 }}
                         >
@@ -563,11 +572,11 @@ export default function ChatPage() {
                     </Card>
                   </motion.div>
 
-                  {/* Suggestions */}
+                  {/* Suggestions - More compact on mobile */}
                   <AnimatePresence>
                     {message.suggestions && message.suggestions.length > 0 && showSuggestions && (
                       <motion.div
-                        className="space-y-2"
+                        className="space-y-1 sm:space-y-2"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
@@ -578,10 +587,11 @@ export default function ChatPage() {
                           animate={{ opacity: [0.7, 1, 0.7] }}
                           transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                         >
-                          <Sparkles size={12} />
-                          Suggested responses:
+                          <Sparkles size={10} className="sm:w-3 sm:h-3" />
+                          <span className="hidden sm:inline">Suggested responses:</span>
+                          <span className="sm:hidden">Suggestions:</span>
                         </motion.p>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1 sm:gap-2">
                           {message.suggestions.map((suggestion, idx) => (
                             <motion.div
                               key={idx}
@@ -594,7 +604,7 @@ export default function ChatPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-xs h-auto py-2 px-3 hover:bg-teal-50 hover:border-teal-300 dark:hover:bg-teal-950 transition-all duration-200 hover:shadow-md"
+                                className="text-xs h-auto py-1 sm:py-2 px-2 sm:px-3 hover:bg-teal-50 hover:border-teal-300 dark:hover:bg-teal-950 transition-all duration-200 hover:shadow-md"
                                 onClick={() => handleSuggestionClick(suggestion)}
                               >
                                 {suggestion}
@@ -630,21 +640,21 @@ export default function ChatPage() {
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
               className="flex justify-start"
             >
-              <div className="flex gap-3 max-w-[80%]">
+              <div className="flex gap-2 sm:gap-3 max-w-[80%]">
                 <motion.div
-                  className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-blue-500 text-white flex items-center justify-center"
+                  className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-teal-500 to-blue-500 text-white flex items-center justify-center"
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }}
                 >
-                  <Brain size={18} />
+                  <Brain size={14} className="sm:w-[18px] sm:h-[18px]" />
                 </motion.div>
-                <Card className="p-4 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-lg">
+                <Card className="p-3 sm:p-4 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-lg">
                   <div className="flex items-center space-x-2">
                     <div className="flex space-x-1">
                       {[0, 1, 2].map((i) => (
                         <motion.div
                           key={i}
-                          className="w-2 h-2 bg-teal-500 rounded-full"
+                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-500 rounded-full"
                           animate={{
                             scale: [1, 1.5, 1],
                             opacity: [0.5, 1, 0.5],
@@ -658,7 +668,7 @@ export default function ChatPage() {
                       ))}
                     </div>
                     <motion.span
-                      className="text-xs text-slate-500 dark:text-slate-400"
+                      className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline"
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                     >
@@ -676,12 +686,12 @@ export default function ChatPage() {
 
       {/* Enhanced Input Input */}
       <motion.div
-        className="flex-shrink-0 p-4 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm relative z-10"
+        className="flex-shrink-0 p-2 sm:p-4 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm relative z-10"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <div className="flex gap-3 items-end">
+        <div className="flex gap-2 sm:gap-3 items-end">
           <div className="flex-1">
             <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
               <Textarea
@@ -690,7 +700,7 @@ export default function ChatPage() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Share what's on your mind... I'm here to listen and support you 💙"
-                className="min-h-[60px] max-h-[120px] resize-none border-slate-300 dark:border-slate-600 focus:border-teal-500 dark:focus:border-teal-400 rounded-xl transition-all duration-200 focus:shadow-lg"
+                className="min-h-[50px] sm:min-h-[60px] max-h-[100px] sm:max-h-[120px] resize-none border-slate-300 dark:border-slate-600 focus:border-teal-500 dark:focus:border-teal-400 rounded-xl transition-all duration-200 focus:shadow-lg text-sm"
                 disabled={isLoading}
               />
             </motion.div>
@@ -699,7 +709,7 @@ export default function ChatPage() {
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              className="h-[60px] px-6 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+              className="h-[50px] sm:h-[60px] px-4 sm:px-6 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
             >
               <motion.div
                 whileHover={{ rotate: 15 }}
@@ -709,15 +719,19 @@ export default function ChatPage() {
                   isLoading ? { duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" } : { duration: 0.2 }
                 }
               >
-                {isLoading ? <RefreshCw size={20} /> : <Send size={20} />}
+                {isLoading ? (
+                  <RefreshCw size={18} className="sm:w-5 sm:h-5" />
+                ) : (
+                  <Send size={18} className="sm:w-5 sm:h-5" />
+                )}
               </motion.div>
             </Button>
           </motion.div>
         </div>
 
-        {/* Enhanced Quick Actions */}
+        {/* Enhanced Quick Actions - More compact on mobile */}
         <motion.div
-          className="mt-3 flex flex-wrap gap-2"
+          className="mt-2 sm:mt-3 flex flex-wrap gap-1 sm:gap-2"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -727,7 +741,7 @@ export default function ChatPage() {
             "Help me with sleep",
             "I need motivation",
             "Feeling overwhelmed",
-            "Share a quiet exercise",
+            "Share a breathing exercise",
           ].map((quickAction, index) => (
             <motion.div
               key={quickAction}
@@ -740,7 +754,7 @@ export default function ChatPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs h-auto py-2 px-3 text-slate-600 dark:text-slate-400 hover:bg-teal-50 hover:text-teal-700 dark:hover:bg-teal-950 dark:hover:text-teal-300 rounded-full transition-all duration-200 hover:shadow-md border border-transparent hover:border-teal-200 dark:hover:border-teal-800"
+                className="text-xs h-auto py-1 sm:py-2 px-2 sm:px-3 text-slate-600 dark:text-slate-400 hover:bg-teal-50 hover:text-teal-700 dark:hover:bg-teal-950 dark:hover:text-teal-300 rounded-full transition-all duration-200 hover:shadow-md border border-transparent hover:border-teal-200 dark:hover:border-teal-800"
                 onClick={() => handleSuggestionClick(quickAction)}
               >
                 {quickAction}

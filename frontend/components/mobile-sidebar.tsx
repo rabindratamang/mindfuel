@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut, X } from "lucide-react"
+import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut, X, Smile } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatedIcon } from "@/components/animated-icon"
@@ -73,7 +73,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                 />
                 <MobileSidebarLink
                   href="/dashboard/mood"
-                  icon={BarChart}
+                  icon={Smile}
                   label="Mood Analysis"
                   isActive={isActive("/dashboard/mood")}
                   onClick={onClose}

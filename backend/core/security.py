@@ -62,29 +62,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
             
-        return user_id
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
-async def get_current_user_with_profile(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = payload["sub"]
-        
-        # Use UserRepository to get user data
-        user_repository = UserRepository()
-        user = await user_repository.get_by_id(user_id)
-        if not user:
-            raise HTTPException(status_code=401, detail="User not found")
-            
+        user_persona = user.get_context_string()
         return {
-            "id": user_id,
-            "email": payload["email"],  # From JWT (faster)
-            "role": payload.get("role"),  # From JWT if exists
-            "profile": {  # Fresh data from DB
-                "firstName": user.firstName,
-                "lastName": user.lastName,
-            }
+            "user": user,
+            "user_persona": user_persona
         }
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token") 
+        raise HTTPException(status_code=401, detail="Invalid token")

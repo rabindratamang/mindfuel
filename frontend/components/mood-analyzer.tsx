@@ -208,19 +208,18 @@ export function MoodAnalyzer({ onMoodAnalyzed, onViewDetails }: MoodAnalyzerProp
     setIsAnalyzing(true)
 
     try {
-      // Enhanced API payload with all the new context
       const response = await apiClient.post("agent/mood_analyzer", {
         input: input.trim(),
-        suggestion_used: usedSuggestion,
-        mood_intensity: moodIntensity[0],
-        selected_emoji: selectedMoodEmoji,
-        context_tags: selectedContext,
-        time_of_day: currentTime.getHours(),
-        timestamp: currentTime.toISOString(),
-        context: usedSuggestion ? `User started with suggestion: "${usedSuggestion}"` : null,
+        context: {
+          suggestion_used: usedSuggestion,
+          mood_intensity: moodIntensity[0],
+          selected_emoji: selectedMoodEmoji,
+          context_tags: selectedContext,
+          time_of_day: currentTime.getHours(),
+          timestamp: currentTime.toISOString(),
+        }
       })
 
-      // Map the real API response to our expected format
       const moodResult = {
         mood: response.analysis.primaryMood,
         score: response.analysis.confidence,

@@ -1,15 +1,45 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import List, Optional
 from datetime import datetime
-from models.user import User, UserRepository, UserInDB
+from pydantic import BaseModel, EmailStr
+from models.user import User, UserRepository, UserInDB, Preferences, Goal
 from core.security import get_current_user
 
 router = APIRouter()
 user_repository = UserRepository()
 
+class ProfileUpdate(BaseModel):
+    avatar: Optional[str] = None
+    bio: Optional[str] = None
+    dateOfBirth: Optional[datetime] = None
+    gender: Optional[str] = None
+    country: Optional[str] = None
+    location: Optional[str] = None
+    phoneNumber: Optional[str] = None
+
+class UserProfileUpdate(BaseModel):
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
+    email: Optional[EmailStr] = None
+    profile: Optional[ProfileUpdate] = None
+
+class PreferencesUpdate(BaseModel):
+    preferences: Preferences
+
+class GoalsUpdate(BaseModel):
+    goals: List[Goal]
+
+class OnboardingData(BaseModel):
+    mentalHealthGoals: List[str]
+    currentChallenges: List[str]
+    wellnessInterests: List[str]
+    experienceLevel: str
+    preferredActivities: List[str]
+    communicationStyle: str
+
 @router.get("/profile", response_model=User)
-async def get_user_profile(current_user_id: str = Depends(get_current_user)):
-    user = await user_repository.get_user_for_response(current_user_id)
+async def get_user_profile(current_user_info: dict = Depends(get_current_user)):
+    user = await user_repository.get_user_for_response(current_user_info["user"].id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
@@ -23,25 +53,69 @@ async def get_user_by_id(user_id: str):
 
 @router.put("/profile")
 async def update_user_profile(
-    updates: dict,
-    current_user_id: str = Depends(get_current_user)
+    updates: UserProfileUpdate,
+    current_user_info: dict = Depends(get_current_user)
 ):
-    allowed_updates = {k: v for k, v in updates.items() 
-                      if k in ["firstName", "lastName", "email"]}
+    update_data = updates.model_dump(exclude_unset=True)
     
-    if not allowed_updates:
-        raise HTTPException(status_code=400, detail="No valid fields to update")
+    mongo_update_data = {}
+    # Flatten profile fields
+    if 'profile' in update_data:
+        profile_updates = update_data.pop('profile')
+        for key, value in profile_updates.items():
+            mongo_update_data[f'profile.{key}'] = value
     
-    success = await user_repository.update(current_user_id, allowed_updates)
-    if not success:
+    # Add other top-level fields
+    for key, value in update_data.items():
+        mongo_update_data[key] = value
+
+    if not mongo_update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    await user_repository.update(current_user_info["user"].id, mongo_update_data)
+    
+    updated_user = await user_repository.get_user_for_response(current_user_info["user"].id)
+    if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
-    
-    updated_user = await user_repository.get_user_for_response(current_user_id)
+        
     return {"message": "Profile updated successfully", "user": updated_user.model_dump(by_alias=True)}
 
+@router.put("/preferences")
+async def update_user_preferences(
+    updates: Preferences,
+    current_user_info: dict = Depends(get_current_user)
+):
+    update_data = {"preferences": updates.model_dump(exclude_unset=True)}
+    
+    if not update_data["preferences"]:
+        raise HTTPException(status_code=400, detail="No preference fields to update")
+
+    await user_repository.update(current_user_info["user"].id, update_data)
+    
+    updated_user = await user_repository.get_user_for_response(current_user_info["user"].id)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    return {"message": "Preferences updated successfully", "user": updated_user.model_dump(by_alias=True)}
+
+@router.post("/goals", response_model=User)
+async def add_user_goal(
+    goal: Goal,
+    current_user_info: dict = Depends(get_current_user)
+):
+    success = await user_repository.add_goal(current_user_info["user"].id, goal)
+    if not success:
+        raise HTTPException(status_code=404, detail="User not found or goal not added")
+
+    updated_user = await user_repository.get_user_for_response(current_user_info["user"].id)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    return updated_user
+
 @router.delete("/profile")
-async def delete_user_profile(current_user_id: str = Depends(get_current_user)):
-    success = await user_repository.delete(current_user_id)
+async def delete_user_profile(current_user_info: dict = Depends(get_current_user)):
+    success = await user_repository.delete(current_user_info["user"].id)
     if not success:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -107,4 +181,29 @@ async def get_users_paginated(
 ):
     """Get users with pagination"""
     users = await user_repository.get_all_users(limit, skip)
-    return users 
+    return users
+
+@router.post("/onboarding")
+async def complete_onboarding(
+    onboarding_data: OnboardingData,
+    current_user_info: dict = Depends(get_current_user)
+):
+    update_data = {
+        "profile.mentalHealthGoals": onboarding_data.mentalHealthGoals,
+        "profile.currentChallenges": onboarding_data.currentChallenges,
+        "profile.wellnessInterests": onboarding_data.wellnessInterests,
+        "profile.experienceLevel": onboarding_data.experienceLevel,
+        "profile.preferredActivities": onboarding_data.preferredActivities,
+        "preferences.communicationStyle": onboarding_data.communicationStyle,
+        "isOnboardComplete": True
+    }
+
+    success = await user_repository.update(current_user_info["user"].id, update_data)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to update user profile with onboarding data")
+
+    updated_user = await user_repository.get_user_for_response(current_user_info["user"].id)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found after update")
+        
+    return {"message": "Onboarding completed successfully", "user": updated_user.model_dump(by_alias=True)} 

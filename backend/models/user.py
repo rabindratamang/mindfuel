@@ -21,11 +21,59 @@ class UserRegister(UserLogin):
     firstName: str
     lastName: str
 
+class Profile(BaseModel):
+    avatar: Optional[str] = None
+    bio: Optional[str] = None
+    dateOfBirth: Optional[datetime] = None
+    gender: Optional[str] = None
+    country: Optional[str] = None
+    location: Optional[str] = None
+    phoneNumber: Optional[str] = None
+    mentalHealthGoals: List[str] = []
+    currentChallenges: List[str] = []
+    wellnessInterests: List[str] = []
+    experienceLevel: Optional[str] = None
+    preferredActivities: List[str] = []
+
+class Stats(BaseModel):
+    daysActive: Optional[int] = 0
+
+class Achievement(BaseModel):
+    title: str
+    description: str
+    earned: bool = False
+    earnedDate: Optional[datetime] = None
+
+class Notifications(BaseModel):
+    dailyReminders: bool = True
+    meditationReminders: bool = True
+    sleepReminders: bool = True
+
+class Preferences(BaseModel):
+    notifications: Notifications = Field(default_factory=Notifications)
+    language: str = "en"
+    timezone: str = "UTC"
+    communicationStyle: Optional[str] = None
+
+class Goal(BaseModel):
+    title: str
+    current: float = 0
+    target: float
+    unit: str
+    type: str
+    reverse: bool = False
+
 class UserInDB(UserBase):
     firstName: str
     lastName: str
     id: Optional[str] = Field(default=None, alias="_id")
     hashedPassword: str
+    profile: Profile = Field(default_factory=Profile)
+    stats: Stats = Field(default_factory=Stats)
+    achievements: List[Achievement] = Field(default_factory=list)
+    preferences: Preferences = Field(default_factory=Preferences)
+    goals: List[Goal] = Field(default_factory=list)
+    isOnboardComplete: bool = False
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
 
@@ -41,6 +89,10 @@ class UserInDB(UserBase):
         if self.id:
             data["_id"] = ObjectId(self.id)
         return data
+
+    def get_context_string(self) -> str:
+        from helpers.user_helpers import get_user_context_string
+        return get_user_context_string(self)
 
     @classmethod
     def from_mongo(cls, data: Dict[str, Any]) -> "UserInDB":
@@ -59,6 +111,12 @@ class User(UserBase):
     id: str
     firstName: str
     lastName: str
+    profile: Profile = Field(default_factory=Profile)
+    stats: Stats = Field(default_factory=Stats)
+    achievements: List[Achievement] = Field(default_factory=list)
+    preferences: Preferences = Field(default_factory=Preferences)
+    goals: List[Goal] = Field(default_factory=list)
+    isOnboardComplete: bool = False
     createdAt: datetime
     updatedAt: datetime
 
@@ -68,6 +126,10 @@ class User(UserBase):
             ObjectId: str,
             datetime: lambda v: v.isoformat()
         }
+
+    def get_context_string(self) -> str:
+        from helpers.user_helpers import get_user_context_string
+        return get_user_context_string(self)
 
     @classmethod
     def from_mongo(cls, data: Dict[str, Any]) -> "User":
@@ -191,4 +253,14 @@ class UserRepository:
             }}
         ]
         result = await (await self.collection).aggregate(pipeline).to_list(None)
-        return result[0] if result else {"totalUsers": 0, "avgCreatedAt": None} 
+        return result[0] if result else {"totalUsers": 0, "avgCreatedAt": None}
+
+    async def add_goal(self, user_id: str, goal: Goal) -> bool:
+        result = await (await self.collection).update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$push": {"goals": goal.model_dump()},
+                "$set": {"updatedAt": datetime.utcnow()}
+            }
+        )
+        return result.modified_count > 0 

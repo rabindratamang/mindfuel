@@ -34,7 +34,8 @@ async def register(register_data: UserRegister):
         "sub": user_id,
         "email": created_user.email,
         "firstName": created_user.firstName,
-        "lastName": created_user.lastName
+        "lastName": created_user.lastName,
+        "isOnboardComplete": created_user.isOnboardComplete 
     })
     refresh_token = create_refresh_token({
         "sub": user_id,
@@ -63,7 +64,8 @@ async def login(login_data: UserLogin):
         "sub": user.id,
         "email": user.email,
         "firstName": user.firstName,
-        "lastName": user.lastName
+        "lastName": user.lastName,
+        "isOnboardComplete": user.isOnboardComplete
     })
     refresh_token = create_refresh_token({
         "sub": user.id,
@@ -95,7 +97,8 @@ async def refresh_token(refresh_token: str):
         "sub": user.id,
         "email": user.email,
         "firstName": user.firstName,
-        "lastName": user.lastName
+        "lastName": user.lastName,
+        "isOnboardComplete": user.isOnboardComplete
     })
     
     return {
@@ -107,10 +110,10 @@ async def refresh_token(refresh_token: str):
 async def change_password(
     current_password: str,
     new_password: str,
-    current_user_id: str = Depends(get_current_user)
+    current_user_info: dict = Depends(get_current_user)
 ):
     """Change user password with validation"""
-    result = await user_helpers.change_user_password(current_user_id, current_password, new_password)
+    result = await user_helpers.change_user_password(current_user_info["user"].id, current_password, new_password)
     
     if not result["success"]:
         raise HTTPException(status_code=400, detail={"message": "Password change failed", "errors": result["errors"]})

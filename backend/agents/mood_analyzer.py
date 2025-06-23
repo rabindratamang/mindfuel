@@ -6,6 +6,7 @@ import re, json
 from datetime import datetime
 from typing import Dict, Any, Optional
 import asyncio
+from prompts.global_prompts import app_context_str
 
 from models.mood_analysis import MoodAnalysis, MoodAnalysisRepository, Analysis, Insights, Recommendations, FollowUp, RiskAssessment, Metadata, Emotion, Sentiment, ContentRecommendations, YouTubeRecommendation, ArticlesRecommendation, SpotifyRecommendation, MeditationRecommendation
 from database.mongo_client import get_database, init_database
@@ -245,7 +246,7 @@ class MoodAnalyzerAgent:
             return MoodAnalysis(
                 userId=user_id,
                 input=user_input,
-                context={},
+                context=context,
                 analysis=analysis,
                 insights=insights,
                 recommendations=recommendations,
@@ -258,18 +259,18 @@ class MoodAnalyzerAgent:
             print(f"Error creating MoodAnalysis model: {e}")
             raise
 
-    async def run(self, user_input: str, user_id: str = None, context: str = None, save_to_db: bool = True) -> Dict[str, Any]:
+    async def run(self, user_input: str, user_id: str = None, context: str = None, user_persona: str = None, save_to_db: bool = True) -> Dict[str, Any]:
         try:
-            context_str = """
-                - MindFuel is a mental wellness app that helps users track mood, get personalized content recommendations, and improve mental health
-                - Users share their thoughts, feelings, and current state
-                - Your analysis will be used to provide personalized YouTube videos, articles, Spotify playlists, and meditation recommendations
-                - Be empathetic, supportive, and professional in your analysis
-            """
+            context_str = app_context_str
+            if context:
+                context_str += f"\n\nUser Context: {context}"
+
+            if user_persona:
+                context_str += f"\n\nUser Persona: {user_persona}"
             
             prompt_vars = {
                 "context": context_str,
-                "input": user_input,
+                "input": user_input
             }
 
             result = await asyncio.to_thread(self.chain.invoke, prompt_vars)
@@ -327,53 +328,4 @@ class MoodAnalyzerAgent:
 
         except Exception as e:
             print(f"Run error: {e}")
-            return {"error": str(e)}
-
-    async def get_user_analyses(self, user_id: str, limit: int = 10, simple: bool = True) -> Dict[str, Any]:
-        try:
-            await init_database()
-            
-            repo = MoodAnalysisRepository()
-            analyses = await repo.get_by_user_id(user_id, limit)
-            
-            if simple:
-                return {
-                    "analyses": [analysis.to_simple_format() for analysis in analyses],
-                    "type": "simple"
-                }
-            else:
-                return {
-                    "analyses": [analysis.dict() for analysis in analyses],
-                    "type": "full"
-                }
-        except Exception as e:
-            print(f"Error getting user analyses: {e}")
-            return {"error": str(e)}
-
-    async def get_mood_trends(self, user_id: str, days: int = 30) -> Dict[str, Any]:
-        try:
-            await init_database()
-            db = await get_database()
-            repo = MoodAnalysisRepository(db)
-            trends = await repo.get_user_mood_trends(user_id, days)
-            return {"trends": trends}
-        except Exception as e:
-            print(f"Error getting mood trends: {e}")
-            return {"error": str(e)}
-
-    def run2(self, user_input, user_id=None, context=None):
-        try:
-            context_str = """
-                - MindFuel is a mental wellness app that helps users track mood, get personalized content recommendations, and improve mental health
-                - Users share their thoughts, feelings, and current state
-                - Your analysis will be used to provide personalized YouTube videos, articles, Spotify playlists, and meditation recommendations
-                - Be empathetic, supportive, and professional in your analysis
-            """
-            prompt_vars = {
-                "context": context_str,
-                "input": user_input,
-            }
-            return self.chain.invoke(prompt_vars) 
-        except Exception as e:
-            print(e)
             return {"error": str(e)}

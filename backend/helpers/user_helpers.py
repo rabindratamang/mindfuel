@@ -10,7 +10,7 @@ def get_user_context_string(user: "User") -> str:
     This string is designed to be easily parsable and provide key information
     about the user's profile, preferences, and goals.
     """
-    context = ["--- User Context ---"]
+    context = ["--- User Background Context ---"]
 
     context.append(f"Name: {user.firstName} {user.lastName}")
     if user.profile.gender:

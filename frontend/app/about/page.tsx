@@ -41,7 +41,7 @@ export default function AboutPage() {
       ],
     },
     {
-      name: "Rabindra Prasad",
+      name: "Rabindra Tamang",
       username: "rabindratamang",
       role: "Software Engineer",
       company: "G-mana",

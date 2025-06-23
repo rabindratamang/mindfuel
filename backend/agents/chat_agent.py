@@ -15,7 +15,7 @@ class ChatAgent:
         self.agent = create_react_agent(
                         model=self.model,
                         tools=[search_youtube_videos, search_spotify_playlists],
-                        name="chat_assistant"
+                        name="chat_assistant",
                     )
 
     async def run(self,user_input, user_id, context, user_persona, recent_messages = []):

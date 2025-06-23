@@ -5,7 +5,7 @@ from typing import List, Dict
 from isodate import parse_duration
 
 @tool(return_direct=True)
-def search_youtube_videos(query: str, region: str = "US", language: str = "en", num_videos: int = 6) -> List[Dict]:
+def search_youtube_videos(query: str, region: str = "US", language: str = "en", num_videos: int = 1) -> List[Dict]:
     """
     Search for a video on YouTube using the YouTube Data API v3.
 

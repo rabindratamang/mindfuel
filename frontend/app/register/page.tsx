@@ -13,6 +13,35 @@ import { useAuth } from "@/contexts/auth-context"
 import { PublicRoute } from "@/components/auth/public-route"
 import { LoadingSpinner } from "@/components/ui-kit/feedback/loading-spinner"
 
+// Email validation function matching backend
+const isValidEmail = (email: string): boolean => {
+  const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return pattern.test(email)
+}
+
+// Password validation function matching backend
+const validatePassword = (password: string): string[] => {
+  const errors: string[] = []
+
+  if (password.length < 8) {
+    errors.push("Password must be at least 8 characters long")
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push("Password must contain at least one uppercase letter")
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push("Password must contain at least one lowercase letter")
+  }
+  if (!/\d/.test(password)) {
+    errors.push("Password must contain at least one number")
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    errors.push("Password must contain at least one special character")
+  }
+
+  return errors
+}
+
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -37,7 +66,7 @@ export default function RegisterPage() {
     e.preventDefault()
     setError("")
 
-    // Validation
+    // Basic field validation
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -49,13 +78,22 @@ export default function RegisterPage() {
       return
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
+    // Email validation
+    if (!isValidEmail(formData.email)) {
+      setError("Please enter a valid email address")
       return
     }
 
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters long")
+    // Password validation
+    const passwordErrors = validatePassword(formData.password)
+    if (passwordErrors.length > 0) {
+      setError(passwordErrors.join(". "))
+      return
+    }
+
+    // Confirm password validation
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
       return
     }
 

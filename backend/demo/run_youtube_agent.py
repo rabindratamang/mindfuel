@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from agents.youtube_agent import YoutubeAgent
+from backend.agents.youtube_agent_tc import YoutubeAgent
 def main():
     agent = YoutubeAgent()
     query = "5 minute yoga video"

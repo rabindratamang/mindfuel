@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
+  setUser: (user: User | null) => void
   login: (email: string, password: string) => Promise<void>
   register: (userData: {
     firstName: string
@@ -34,12 +35,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initializeAuth = async () => {
       try {
         const currentUser = authService.getCurrentUser()
+        console.log("Auth initialization - currentUser:", currentUser) // Debug log
         if (currentUser) {
           setUser(currentUser)
         } else {
           // Try to refresh token if we have a refresh token
           const refreshToken = authService.getRefreshToken()
           if (refreshToken) {
+            console.log("Attempting token refresh...") // Debug log
             await refreshToken()
           }
         }
@@ -79,11 +82,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
         const { user: userData, tokens } = await authService.login(email, password)
 
+        console.log("Login response - userData:", userData) // Debug log
+        console.log("Login response - tokens:", tokens) // Debug log
+        console.log("isOnboardComplete:", userData.isOnboardComplete) // Debug log
+        
         authService.setTokens(tokens)
         setUser(userData)
 
-        // Redirect to dashboard after successful login
-        router.push("/dashboard")
+        // Check if onboarding is complete - be explicit about the check
+        if (userData.isOnboardComplete === false || userData.isOnboardComplete === undefined) {
+          console.log("Redirecting to onboarding...") // Debug log
+          router.push("/onboarding")
+        } else {
+          console.log("Redirecting to dashboard...") // Debug log
+          router.push("/dashboard")
+        }
       } catch (error) {
         console.error("Login failed:", error)
         throw error
@@ -108,8 +121,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         authService.setTokens(tokens)
         setUser(newUser)
 
-        // Redirect to dashboard after successful registration
-        router.push("/dashboard")
+        // New users always go to onboarding first
+        console.log("New user registered, redirecting to onboarding...") // Debug log
+        router.push("/onboarding")
       } catch (error) {
         console.error("Registration failed:", error)
         throw error
@@ -155,6 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     isLoading,
     isAuthenticated,
+    setUser,
     login,
     register,
     logout,

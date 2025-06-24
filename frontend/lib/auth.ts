@@ -76,6 +76,7 @@ class AuthService {
         email: decoded.email,
         firstName: decoded.firstName,
         lastName: decoded.lastName,
+        isOnboardComplete: decoded.isOnboardComplete,
       }
     } catch {
       return null

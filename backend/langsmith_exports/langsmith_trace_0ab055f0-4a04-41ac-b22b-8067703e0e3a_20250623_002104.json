@@ -1,0 +1,82 @@
+{
+  "id": "0ab055f0-4a04-41ac-b22b-8067703e0e3a",
+  "name": "RunnableSequence",
+  "start_time": "2025-06-22 18:33:02.966163",
+  "run_type": "chain",
+  "end_time": "2025-06-22 18:33:14.865675",
+  "extra": {
+    "runtime": {
+      "sdk": "langsmith-py",
+      "sdk_version": "0.3.45",
+      "library": "langchain-core",
+      "platform": "Linux-6.11.0-26-generic-x86_64-with-glibc2.39",
+      "runtime": "python",
+      "py_implementation": "CPython",
+      "runtime_version": "3.12.3",
+      "langchain_version": "0.3.25",
+      "langchain_core_version": "0.3.64",
+      "library_version": "0.3.64"
+    },
+    "metadata": {
+      "LANGSMITH_TRACING": "true",
+      "LANGSMITH_ENDPOINT": "https://api.smith.langchain.com",
+      "LANGSMITH_PROJECT": "mindfuel",
+      "revision_id": "e80fd70-dirty",
+      "ls_run_depth": 0
+    }
+  },
+  "error": null,
+  "serialized": null,
+  "events": [
+    {
+      "name": "start",
+      "time": "2025-06-22T18:33:02.966163+00:00"
+    },
+    {
+      "name": "end",
+      "time": "2025-06-22T18:33:14.865675+00:00"
+    }
+  ],
+  "inputs": {
+    "context": "\n                - MindFuel is a mental wellness app that helps users track mood, get personalized content recommendations, and improve mental health\n                - Users share their thoughts, feelings, and current state\n                - Your analysis will be used to provide personalized YouTube videos, articles, Spotify playlists, and meditation recommendations\n                - Be empathetic, supportive, and professional in your analysis\n            ",
+    "input": "it's already 12 53 am. I have to sleep now but i don't know why i am still awake"
+  },
+  "outputs": {
+    "output": " */\n            {\n            \"analysis\": {\n                \"primaryMood\": \"Anxious\",\n                \"moodCategory\": \"negative\",\n                \"confidence\": 85,\n                \"intensity\": 7,\n                \"emotions\": [\n                    {\n                        \"emotion\": \"Worry\",\n                        \"score\": 80\n                    },\n                    {\n                        \"emotion\": \"Restlessness\",\n                        \"score\": 75\n                    },\n                    {\n                        \"emotion\": \"Fatigue\",\n                        \"score\": 70\n                    }\n                ],\n                \"sentiment\": {\n                    \"polarity\": -0.5,\n                    \"subjectivity\": 0.8\n                }\n            },\n            \"insights\": {\n                \"summary\": \"You seem to be experiencing anxiety and restlessness as you struggle to fall asleep. This may be due to underlying worries that are keeping you awake.\",\n                \"keyThemes\": [\"Sleep\", \"Anxiety\"],\n                \"triggers\": [\"Late hour\", \"Inability to sleep\"],\n                \"strengths\": [\"Awareness of sleep issues\"],\n                \"concerns\": [\"Difficulty in managing anxiety\"]\n            },\n            \"recommendations\": {\n                \"immediate\": [\n                    \"Practice deep breathing exercises for relaxation\",\n                    \"Limit screen time before bed\",\n                    \"Create a calming bedtime routine\",\n                    \"Try a warm herbal tea\",\n                    \"Write down your thoughts to clear your mind\",\n                    \"Listen to calming music or sounds\"\n                ],\n                \"content\": {\n                    \"youtube\": {\n                        \"types\": [\"meditation\", \"relaxation\", \"breathing exercises\"],\n                        \"keywords\": [\"sleep meditation\", \"calming sounds\", \"relaxation techniques\", \"nighttime routine\", \"mindfulness for sleep\"],\n                        \"duration\": \"medium\",\n                        \"mood\": \"Calm\"\n                    },\n                    \"articles\": {\n                        \"topics\": [\"sleep\", \"anxiety\", \"mindfulness\"],\n                        \"difficulty\": \"beginner\",\n                        \"focus\": [\"coping strategies\", \"sleep hygiene\"]\n                    },\n                    \"spotify\": {\n                        \"keywords\": [\"calm music\", \"sleep sounds\", \"relaxation playlists\", \"meditation music\", \"ambient sounds\"],\n                        \"genres\": [\"ambient\", \"classical\"],\n                        \"energy\": 0,\n                        \"valence\": 0.5,\n                        \"mood\": \"relaxing\"\n                    },\n                    \"meditation\": {\n                        \"types\": [\"breathing\", \"body scan\"],\n                        \"duration\": 10,\n                        \"difficulty\": \"beginner\"\n                    }\n                }\n            },\n            \"followUp\": {\n                \"questions\": [\n                    \"What specific thoughts are keeping you awake?\",\n                    \"Have you tried any relaxation techniques before bed?\"\n                ],\n                \"checkIn\": \"24 hours\",\n                \"goals\": [\"Establish a consistent sleep schedule\", \"Practice relaxation techniques nightly\"]\n            },\n            \"riskAssessment\": {\n                \"level\": \"medium\",\n                \"indicators\": [\"Persistent anxiety\", \"Difficulty sleeping regularly\"],\n                \"recommendations\": [\"Consider consulting with a mental health professional if anxiety persists\"],\n                \"urgency\": \"monitor\"\n            },\n            \"metadata\": {\n                \"wordCount\": 17,\n                \"complexity\": \"simple\",\n                \"timeOfDay\": \"night\",\n                \"context\": [\"home\"]\n            }\n        }"
+  },
+  "reference_example_id": null,
+  "parent_run_id": null,
+  "tags": [],
+  "attachments": {},
+  "session_id": "4903534f-c08e-4584-be22-d27b53d7bedf",
+  "child_run_ids": [
+    "f5c0498f-bb7a-4b7f-b325-a709ef061ac9",
+    "5bbf569b-8c52-4c4f-a9c6-9850761868da"
+  ],
+  "child_runs": null,
+  "feedback_stats": null,
+  "app_path": "/o/8562cb79-4098-46cb-af08-f45db78c3ad5/projects/p/4903534f-c08e-4584-be22-d27b53d7bedf/r/0ab055f0-4a04-41ac-b22b-8067703e0e3a?trace_id=0ab055f0-4a04-41ac-b22b-8067703e0e3a&start_time=2025-06-22T18:33:02.966163",
+  "manifest_id": null,
+  "status": "success",
+  "prompt_tokens": 1377,
+  "completion_tokens": 687,
+  "total_tokens": 2064,
+  "prompt_token_details": null,
+  "completion_token_details": null,
+  "first_token_time": null,
+  "total_cost": "0.00061875",
+  "prompt_cost": "0.00020655",
+  "completion_cost": "0.0004122",
+  "prompt_cost_details": null,
+  "completion_cost_details": null,
+  "parent_run_ids": [],
+  "trace_id": "0ab055f0-4a04-41ac-b22b-8067703e0e3a",
+  "dotted_order": "20250622T183302966163Z0ab055f0-4a04-41ac-b22b-8067703e0e3a",
+  "in_dataset": false,
+  "export_info": {
+    "exported_at": "2025-06-22T18:36:04.866418",
+    "run_id": "0ab055f0-4a04-41ac-b22b-8067703e0e3a",
+    "export_version": "1.0",
+    "include_metadata": true
+  }
+}

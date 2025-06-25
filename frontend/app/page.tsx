@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   ],
   authors: [
     { name: "Shashwot Pradhan", url: "https://github.com/Shashwot90" },
-    { name: "Rabindra Prasad", url: "https://github.com/rabindratamang" },
+    { name: "Rabindra Tamang", url: "https://github.com/rabindratamang" },
   ],
   creator: "MindFuel Team",
   publisher: "MindFuel",

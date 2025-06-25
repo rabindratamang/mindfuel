@@ -35,7 +35,7 @@ export default function ClientPage() {
       },
       {
         "@type": "Person",
-        name: "Rabindra Prasad",
+        name: "Rabindra Tamang",
         url: "https://github.com/rabindratamang",
       },
     ],

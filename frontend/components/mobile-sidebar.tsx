@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut, X } from "lucide-react"
+import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut, X, Smile, MessageCircle } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatedIcon } from "@/components/animated-icon"
@@ -72,8 +72,15 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                   onClick={onClose}
                 />
                 <MobileSidebarLink
+                  href="/dashboard/chat"
+                  icon={MessageCircle}
+                  label="Chat with AI"
+                  isActive={isActive("/dashboard/chat")}
+                  onClick={onClose}
+                />
+                <MobileSidebarLink
                   href="/dashboard/mood"
-                  icon={BarChart}
+                  icon={Smile}
                   label="Mood Analysis"
                   isActive={isActive("/dashboard/mood")}
                   onClick={onClose}

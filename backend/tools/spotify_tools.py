@@ -18,7 +18,7 @@ def get_spotify_token(client_id: str, client_secret: str) -> str:
 
 
 @tool(return_direct=True)
-def search_spotify_playlists(query: str, num_playlists: int = 6) -> dict:
+def search_spotify_playlists(query: str, num_playlists: int = 1) -> dict:
     """
     Search for Spotify playlists using a keyword (e.g., "sleep", "meditation").
 

@@ -9,6 +9,8 @@ import { TrendingUp, ChevronRight, Calendar, BarChart3 } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Button } from "@/components/ui/button"
 import { MoodEntryDetail } from "@/components/mood-entry-detail"
+import { apiClient } from "@/lib/api-client"
+import { humanifyEntryDate } from "@/lib/utils"
 
 export default function MoodPage() {
   // This would come from the MoodAnalyzer component in a real implementation
@@ -20,6 +22,11 @@ export default function MoodPage() {
   const [selectedVideo, setSelectedVideo] = useState<{ videoId: string; title: string } | null>(null)
   const [journalEntries, setJournalEntries] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const entriesPerPage = 5
+  const totalPages = Math.ceil(journalEntries.length / entriesPerPage)
+  const paginatedEntries = journalEntries.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
 
   const handleMoodAnalyzed = (
     mood: string,
@@ -100,127 +107,124 @@ export default function MoodPage() {
         setLoading(true)
         // For now, we'll use mock data since we don't have the journal endpoint yet
         // Replace this with actual API call when available
-        // const response = await apiClient.get('/mood/journal')
-
-        // Mock data with real structure
-        const mockEntries = [
-          {
-            _id: "6856d16cc6f5ddb1470a0f07",
-            userId: "684dde1e2e116b51058674bc",
-            date: "Today, 2:30 PM",
-            preview: "You experienced a productive morning meeting that made you feel valued and happy...",
-            fullContent:
-              "Had a productive morning meeting where my contributions were valued, leading to a strong sense of confidence and happiness. The team was receptive to my ideas and I felt confident presenting.",
-            analysis: {
-              primaryMood: "Happy",
-              moodCategory: "positive",
-              confidence: 90,
-              intensity: 8,
-              emotions: [
-                { emotion: "Joy", score: 85 },
-                { emotion: "Satisfaction", score: 80 },
-              ],
-              sentiment: {
-                polarity: 1,
-                subjectivity: 0.8,
-              },
-            },
-            insights: {
-              summary:
-                "You experienced a productive morning meeting that made you feel valued and happy. This positive engagement reflects a strong sense of accomplishment.",
-              keyThemes: ["work", "achievement"],
-              triggers: ["productive meeting", "valued contributions"],
-              strengths: ["positive feedback", "team collaboration"],
-              concerns: [],
-            },
-            recommendations: {
-              immediate: [
-                "Reflect on your contributions and how they made a difference.",
-                "Share your positive experience with colleagues.",
-                "Set new goals for upcoming meetings.",
-                "Continue seeking opportunities for collaboration.",
-                "Practice gratitude for your achievements.",
-                "Engage in a short mindfulness exercise to maintain positivity.",
-              ],
-              content: {
-                youtube: {
-                  videos: [
-                    {
-                      title: "What Makes the Highest Performing Teams in the World | Simon Sinek",
-                      video_url: "https://www.youtube.com/watch?v=zP9jpxitfb4",
-                      duration_seconds: 82,
-                      thumbnail: "https://i.ytimg.com/vi/zP9jpxitfb4/hqdefault.jpg",
-                      channel: {
-                        title: "Simon Sinek",
-                        channel_id: "UCPmfPl-BsCd3wmE8i45LAoA",
-                        avatar:
-                          "https://yt3.ggpht.com/ytc/AIdro_l2t7UWFeHV7IKyIAM4rexGjLh0CeJ0tCo8b8pTAMjug9U=s240-c-k-c0x00ffffff-no-rj",
-                        channel_url: "https://www.youtube.com/channel/UCPmfPl-BsCd3wmE8i45LAoA",
-                      },
-                    },
-                    {
-                      title: "THE POWER OF POSITIVITY - Best Motivational Video For Positive Thinking",
-                      video_url: "https://www.youtube.com/watch?v=HwLK9dBQn0g",
-                      duration_seconds: 764,
-                      thumbnail: "https://i.ytimg.com/vi/HwLK9dBQn0g/hqdefault.jpg",
-                      channel: {
-                        title: "Motivation2Study",
-                        channel_id: "UC8PICQUP0a_HsrA9S4IIgWw",
-                        avatar:
-                          "https://yt3.ggpht.com/ytc/AIdro_m8DuO0qNak58a-KpeERBOx8IuZvbZn6cjL33JUi6Te0p4=s240-c-k-c0x00ffffff-no-rj",
-                        channel_url: "https://www.youtube.com/channel/UC8PICQUP0a_HsrA9S4IIgWw",
-                      },
-                    },
-                  ],
-                },
-                spotify: {
-                  playlist: {
-                    playlists: [
-                      {
-                        name: "Energetic Upbeat lofi 🍉 Jazzhop Beats & Chillhop Music",
-                        description:
-                          "Study lo-fi vibes chill adhd focus for work 2025 new jazz hip hop instrumental covers low fi cafe bar fast uplifting feel good songs relax to stress relief tunes",
-                        external_url: "https://open.spotify.com/playlist/5vImPKH5smp2ifK34N6XTd",
-                        image: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c6167208749bd9e763b85353d",
-                        owner: {
-                          name: "Chill Select",
-                          url: "https://open.spotify.com/user/dor7cmlu5cn1dki1iqagc2ba6",
-                        },
-                        tracks: {
-                          total: 426,
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-            followUp: {
-              questions: [
-                "What made the meeting feel productive for you?",
-                "How do you plan to build on this positive experience?",
-              ],
-              checkIn: "2 days",
-              goals: ["Continue to engage in productive meetings", "Seek feedback regularly"],
-            },
-            riskAssessment: {
-              level: "low",
-              indicators: [],
-              recommendations: [],
-              urgency: "none",
-            },
-            metadata: {
-              wordCount: 17,
-              complexity: "simple",
-              timeOfDay: "morning",
-              context: ["work"],
-            },
-            createdAt: "2025-06-22T04:25:46.333273",
-            updatedAt: "2025-06-22T04:25:46.333277",
-          },
-        ]
-
-        setJournalEntries(mockEntries)
+        const entries = await apiClient.get("/mood")
+        // entries.push(
+        //     {
+        //       _id: "6856d16cc6f5ddb1470a0f07",
+        //       userId: "684dde1e2e116b51058674bc",
+        //       date: "Today, 2:30 PM",
+        //       preview: "You experienced a productive morning meeting that made you feel valued and happy...",
+        //       fullContent:
+        //         "Had a productive morning meeting where my contributions were valued, leading to a strong sense of confidence and happiness. The team was receptive to my ideas and I felt confident presenting.",
+        //       analysis: {
+        //         primaryMood: "Happy",
+        //         moodCategory: "positive",
+        //         confidence: 90,
+        //         intensity: 8,
+        //         emotions: [
+        //           { emotion: "Joy", score: 85 },
+        //           { emotion: "Satisfaction", score: 80 },
+        //         ],
+        //         sentiment: {
+        //           polarity: 1,
+        //           subjectivity: 0.8,
+        //         },
+        //       },
+        //       insights: {
+        //         summary:
+        //           "You experienced a productive morning meeting that made you feel valued and happy. This positive engagement reflects a strong sense of accomplishment.",
+        //         keyThemes: ["work", "achievement"],
+        //         triggers: ["productive meeting", "valued contributions"],
+        //         strengths: ["positive feedback", "team collaboration"],
+        //         concerns: [],
+        //       },
+        //       recommendations: {
+        //         immediate: [
+        //           "Reflect on your contributions and how they made a difference.",
+        //           "Share your positive experience with colleagues.",
+        //           "Set new goals for upcoming meetings.",
+        //           "Continue seeking opportunities for collaboration.",
+        //           "Practice gratitude for your achievements.",
+        //           "Engage in a short mindfulness exercise to maintain positivity.",
+        //         ],
+        //         content: {
+        //           youtube: {
+        //             videos: [
+        //               {
+        //                 title: "What Makes the Highest Performing Teams in the World | Simon Sinek",
+        //                 video_url: "https://www.youtube.com/watch?v=zP9jpxitfb4",
+        //                 duration_seconds: 82,
+        //                 thumbnail: "https://i.ytimg.com/vi/zP9jpxitfb4/hqdefault.jpg",
+        //                 channel: {
+        //                   title: "Simon Sinek",
+        //                   channel_id: "UCPmfPl-BsCd3wmE8i45LAoA",
+        //                   avatar:
+        //                     "https://yt3.ggpht.com/ytc/AIdro_l2t7UWFeHV7IKyIAM4rexGjLh0CeJ0tCo8b8pTAMjug9U=s240-c-k-c0x00ffffff-no-rj",
+        //                   channel_url: "https://www.youtube.com/channel/UCPmfPl-BsCd3wmE8i45LAoA",
+        //                 },
+        //               },
+        //               {
+        //                 title: "THE POWER OF POSITIVITY - Best Motivational Video For Positive Thinking",
+        //                 video_url: "https://www.youtube.com/watch?v=HwLK9dBQn0g",
+        //                 duration_seconds: 764,
+        //                 thumbnail: "https://i.ytimg.com/vi/HwLK9dBQn0g/hqdefault.jpg",
+        //                 channel: {
+        //                   title: "Motivation2Study",
+        //                   channel_id: "UC8PICQUP0a_HsrA9S4IIgWw",
+        //                   avatar:
+        //                     "https://yt3.ggpht.com/ytc/AIdro_m8DuO0qNak58a-KpeERBOx8IuZvbZn6cjL33JUi6Te0p4=s240-c-k-c0x00ffffff-no-rj",
+        //                   channel_url: "https://www.youtube.com/channel/UC8PICQUP0a_HsrA9S4IIgWw",
+        //                 },
+        //               },
+        //             ],
+        //           },
+        //           spotify: {
+        //             playlist: {
+        //               playlists: [
+        //                 {
+        //                   name: "Energetic Upbeat lofi 🍉 Jazzhop Beats & Chillhop Music",
+        //                   description:
+        //                     "Study lo-fi vibes chill adhd focus for work 2025 new jazz hip hop instrumental covers low fi cafe bar fast uplifting feel good songs relax to stress relief tunes",
+        //                   external_url: "https://open.spotify.com/playlist/5vImPKH5smp2ifK34N6XTd",
+        //                   image: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c6167208749bd9e763b85353d",
+        //                   owner: {
+        //                     name: "Chill Select",
+        //                     url: "https://open.spotify.com/user/dor7cmlu5cn1dki1iqagc2ba6",
+        //                   },
+        //                   tracks: {
+        //                     total: 426,
+        //                   },
+        //                 },
+        //               ],
+        //             },
+        //           },
+        //         },
+        //       },
+        //       followUp: {
+        //         questions: [
+        //           "What made the meeting feel productive for you?",
+        //           "How do you plan to build on this positive experience?",
+        //         ],
+        //         checkIn: "2 days",
+        //         goals: ["Continue to engage in productive meetings", "Seek feedback regularly"],
+        //       },
+        //       riskAssessment: {
+        //         level: "low",
+        //         indicators: [],
+        //         recommendations: [],
+        //         urgency: "none",
+        //       },
+        //       metadata: {
+        //         wordCount: 17,
+        //         complexity: "simple",
+        //         timeOfDay: "morning",
+        //         context: ["work"],
+        //       },
+        //       createdAt: "2025-06-22T04:25:46.333273",
+        //       updatedAt: "2025-06-22T04:25:46.333277",
+        //     }
+        // )
+        setJournalEntries(entries)
       } catch (error) {
         console.error("Failed to fetch journal entries:", error)
       } finally {
@@ -392,43 +396,80 @@ export default function MoodPage() {
 
         <TabsContent value="personal-journal" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Personal Journal</CardTitle>
-              <CardDescription>Your mood analysis history and insights</CardDescription>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg">Personal Journal</CardTitle>
+                  <CardDescription className="text-sm">Your mood analysis history and insights</CardDescription>
+                </div>
+                <div className="text-xs text-slate-500">{journalEntries.length} total entries</div>
+              </div>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="text-slate-500">Loading journal entries...</div>
+                <div className="flex items-center justify-center py-6">
+                  <div className="text-slate-500 text-sm">Loading journal entries...</div>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {journalEntries.map((entry) => (
+                  {/* Pagination Controls */}
+                  <div className="flex items-center justify-between py-2 border-b">
+                    <div className="text-xs text-slate-500">
+                      Showing {(currentPage - 1) * entriesPerPage + 1}-
+                      {Math.min(currentPage * entriesPerPage, journalEntries.length)} of {journalEntries.length}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="h-7 px-2 text-xs"
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-xs px-2">
+                        {currentPage} of {totalPages}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="h-7 px-2 text-xs"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Journal Entries */}
+                  {paginatedEntries.map((entry) => (
                     <Collapsible
                       key={entry._id || entry.id}
                       open={expandedEntry === (entry._id || entry.id)}
                       onOpenChange={(open) => setExpandedEntry(open ? entry._id || entry.id : null)}
                     >
                       <CollapsibleTrigger asChild>
-                        <div className="w-full p-4 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                        <div className="w-full p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
                           <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                                  <Calendar className="w-4 h-4" />
-                                  {entry.date}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                                  <Calendar className="w-3 h-3" />
+                                  {humanifyEntryDate(entry.createdAt)}
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1">
                                   <div
-                                    className={`w-2 h-2 rounded-full ${
-                                      (entry.analysis?.confidence || entry.score) >= 70
+                                    className={`w-1.5 h-1.5 rounded-full ${
+                                        entry.analysis.moodCategory === "positive"
                                         ? "bg-green-500"
-                                        : (entry.analysis?.confidence || entry.score) >= 50
-                                          ? "bg-yellow-500"
-                                          : "bg-red-500"
+                                        : entry.analysis.moodCategory === "negative"
+                                          ? "bg-red-500"
+                                          : "bg-yellow-500"
                                     }`}
                                   />
-                                  <span className="text-sm font-medium">
+                                  <span className="text-xs font-medium">
                                     {entry.analysis?.primaryMood || entry.mood}
                                   </span>
                                   <span className="text-xs text-slate-500">
@@ -436,9 +477,9 @@ export default function MoodPage() {
                                   </span>
                                 </div>
                               </div>
-                              <p className="text-sm text-slate-600 dark:text-slate-300">{entry.preview}</p>
+                              <p className="text-xs text-slate-600 dark:text-slate-300 truncate pr-2">{entry.input}</p>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-shrink-0">
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -446,11 +487,12 @@ export default function MoodPage() {
                                   e.stopPropagation()
                                   handleViewJournalEntry(entry)
                                 }}
+                                className="h-7 px-2 text-xs"
                               >
-                                View Details
+                                View
                               </Button>
                               <ChevronRight
-                                className={`w-4 h-4 text-slate-400 transition-transform ${
+                                className={`w-3 h-3 text-slate-400 transition-transform ${
                                   expandedEntry === (entry._id || entry.id) ? "rotate-90" : ""
                                 }`}
                               />
@@ -458,34 +500,34 @@ export default function MoodPage() {
                           </div>
                         </div>
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-3">
-                        <div className="border-l-4 border-teal-500 pl-4 space-y-4">
+                      <CollapsibleContent className="mt-2">
+                        <div className="border-l-2 border-teal-500 pl-3 space-y-3 ml-1">
                           <div>
-                            <h4 className="font-medium mb-2">Full Entry</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-300">
-                              {entry.fullContent || entry.insights?.summary}
+                            <h4 className="font-medium mb-1 text-sm">Full Entry</h4>
+                            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                              {entry.input || entry.insights?.summary}
                             </p>
                           </div>
 
                           <div>
-                            <h4 className="font-medium mb-2">AI Analysis</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-300">
+                            <h4 className="font-medium mb-1 text-sm">AI Analysis</h4>
+                            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                               {entry.insights?.summary || entry.analysis}
                             </p>
                           </div>
 
                           <div>
-                            <h4 className="font-medium mb-2">Quick Preview</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded">
-                                <div className="text-sm font-medium mb-1">Immediate Actions</div>
-                                <div className="text-xs text-slate-600 dark:text-slate-400">
+                            <h4 className="font-medium mb-1 text-sm">Quick Preview</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded text-xs">
+                                <div className="font-medium mb-1">Immediate Actions</div>
+                                <div className="text-slate-600 dark:text-slate-400">
                                   {entry.recommendations?.immediate?.length || 0} suggestions available
                                 </div>
                               </div>
-                              <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded">
-                                <div className="text-sm font-medium mb-1">Content Recommendations</div>
-                                <div className="text-xs text-slate-600 dark:text-slate-400">
+                              <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded text-xs">
+                                <div className="font-medium mb-1">Content Recommendations</div>
+                                <div className="text-slate-600 dark:text-slate-400">
                                   {(entry.recommendations?.content?.youtube?.videos?.length || 0) +
                                     (entry.recommendations?.content?.spotify?.playlist?.playlists?.length || 0)}{" "}
                                   items curated
@@ -497,6 +539,14 @@ export default function MoodPage() {
                       </CollapsibleContent>
                     </Collapsible>
                   ))}
+
+                  {/* Empty State */}
+                  {journalEntries.length === 0 && !loading && (
+                    <div className="text-center py-8">
+                      <div className="text-slate-400 text-sm">No journal entries yet</div>
+                      <div className="text-xs text-slate-500 mt-1">Start by analyzing your mood above</div>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

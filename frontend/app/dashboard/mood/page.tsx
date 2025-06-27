@@ -107,7 +107,7 @@ export default function MoodPage() {
         setLoading(true)
         // For now, we'll use mock data since we don't have the journal endpoint yet
         // Replace this with actual API call when available
-        const entries = await apiClient.get("/mood")
+        const entries = await apiClient.get("/mood/")
         // entries.push(
         //     {
         //       _id: "6856d16cc6f5ddb1470a0f07",

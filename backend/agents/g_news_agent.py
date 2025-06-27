@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage
-from tools.google_news_tools import search_news_by_keyword
+from tools.g_news_tools import search_g_news_by_keyword
 from config.setting import settings
 
 class GoogleNewsAgent:
@@ -10,10 +10,10 @@ class GoogleNewsAgent:
         self.model = ChatOpenAI(api_key=self.openai_api_key, model="gpt-4o-mini", verbose=True)
         self.agent = create_react_agent(
             model=self.model,
-            tools=[search_news_by_keyword],
+            tools=[search_g_news_by_keyword],
             prompt=(
-                "You are a helpful Google News assistant. Your task is to help users find recent news articles based on their search queries.\n\n"
-                "Use the `search_news_by_keyword` tool by passing the keyword provided by the user.\n\n"
+                "You are a helpful G News assistant. Your task is to help users find recent news articles based on their search queries.\n\n"
+                "Use the `search_g_news_by_keyword` tool by passing the keyword provided by the user.\n\n"
                 "Always return the results strictly in this JSON format:\n"
                 "{\n"
                 '  "query": string,\n'
@@ -24,8 +24,7 @@ class GoogleNewsAgent:
                 '      "snippet": string,\n'
                 '      "news_url": string,\n'
                 '      "thumbnail": string,\n'
-                '      "publisher": string,\n'
-                '      "timestamp": integer,\n'
+                '      "source": {{"name": string, "url": string}},\n'
                 '      "published_time": string\n'
                 '    },\n'
                 "    ... (up to 3 items)\n"
@@ -33,7 +32,7 @@ class GoogleNewsAgent:
                 "}\n\n"
                 "Do not include markdown, extra explanations, or formatting — only return clean JSON."
             ),
-            name="google_assistant"
+            name="g_news_assistant"
         )
 
     def run(self, user_input):
@@ -44,14 +43,14 @@ class GoogleNewsAgent:
     
     def get_news_article(self, news_recommendation: dict, num_articles: int = 1):
         """
-        Find YouTube videos based on recommendation criteria.
+        Find news articles based on recommendation criteria.
         
         Args:
-            youtube_recommendation (dict): Dictionary containing search criteria
-            num_videos (int): Number of videos to return
+            news_recommendation (dict): Dictionary containing search criteria
+            num_articles (int): Number of articles to return
             
         Returns:
-            dict: JSON array of video results or error message
+            dict: JSON array of news article results or error message
         """
         try:
             keywords = news_recommendation.get("keywords", [])

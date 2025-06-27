@@ -3,6 +3,7 @@ from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage
 from tools.youtube_tools import search_youtube_videos
 from tools.spotify_tools import search_spotify_playlists
+from tools.google_news_tools import search_news_by_keyword
 from config.setting import settings
 import json
 import asyncio
@@ -14,7 +15,7 @@ class ChatAgent:
         self.model = ChatOpenAI(api_key=settings.OPENAI_API_KEY, model="gpt-4o-mini")
         self.agent = create_react_agent(
                         model=self.model,
-                        tools=[search_youtube_videos, search_spotify_playlists],
+                        tools=[search_youtube_videos, search_spotify_playlists, search_news_by_keyword],
                         name="chat_assistant",
                     )
 

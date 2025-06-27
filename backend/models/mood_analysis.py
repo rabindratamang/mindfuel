@@ -48,9 +48,9 @@ class YouTubeRecommendation(BaseModel):
     videos: Optional[List[Dict[str, Any]]] = []
 
 class ArticlesRecommendation(BaseModel):
-    topics: List[str]
-    difficulty: str
-    focus: List[str]
+    keywords: List[str] = Field(default=[])
+    focus: List[str] = Field(default=[])
+    articles: Optional[List[Dict[str, Any]]] = []
 
 
 class SpotifyPlaylist(BaseModel):

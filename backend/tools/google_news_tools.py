@@ -1,9 +1,9 @@
 from langchain_core.tools import tool
 import requests
-import os
+import time
 from config.setting import settings
-@tool
-def search_news_by_keyword(keyword: str, region: str = "en-US") -> str:
+@tool(return_direct=True)
+def search_news_by_keyword(keyword: str, region: str = "en-US", num_articles: int = 3) -> dict:
     """
     Search Google News for articles matching a keyword using the google-news13 API.
 
@@ -12,13 +12,12 @@ def search_news_by_keyword(keyword: str, region: str = "en-US") -> str:
         region (str): Language-region code (default: 'en-US').
 
     Returns:
-        str: A summary of the top 3 news articles with title, summary, and link.
+        dict: A JSON object containing the keyword and a list of top 3 news articles.
     """
-    rapidapi_key = settings.RAPIDAPI_KEY
     url = "https://google-news13.p.rapidapi.com/search"
     querystring = {"keyword": keyword, "lr": region}
     headers = {
-        "x-rapidapi-key": rapidapi_key,
+        "x-rapidapi-key": settings.RAPID_API_KEY,  
         "x-rapidapi-host": "google-news13.p.rapidapi.com"
     }
 
@@ -28,18 +27,28 @@ def search_news_by_keyword(keyword: str, region: str = "en-US") -> str:
         data = response.json()
         items = data.get("items", [])
 
-        if not items:
-            return f"No news found for keyword: {keyword}"
+        articles = []
+        for item in items[:num_articles]:
+            timestamp = item.get("timestamp")
+            readable_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(timestamp) / 1000)) if timestamp else None
 
-        result = f"📰 Top News for '{keyword}':\n"
-        for idx, item in enumerate(items[:3], start=1):  # Top 3 items
-            title = item.get("title", "No title")
-            snippet = item.get("snippet", "No summary")
-            link = item.get("newsUrl", "No link")
-            result += f"\n{idx}. {title}\n📄 {snippet}\n🔗 {link}\n"
-        return result.strip()
+            articles.append({
+                "title": item.get("title", "No title"),
+                "snippet": item.get("snippet", "No summary"),
+                "news_url": item.get("newsUrl", "No link"),
+                "thumbnail": item.get("images", {}).get("thumbnail", ""),
+                "publisher": item.get("publisher", "Unknown"),
+                "timestamp": timestamp,
+                "published_time": readable_time
+            })
+
+        return {
+            "query": keyword,
+            "total": len(articles),
+            "articles": articles
+        }
 
     except requests.exceptions.RequestException as e:
-        return f"❌ Error fetching news: {str(e)}"
+        return {"error": f"Request failed: {str(e)}"}
     except (KeyError, TypeError) as e:
-        return f"❌ Unexpected response format: {str(e)}"
+        return {"error": f"Unexpected response format: {str(e)}"}

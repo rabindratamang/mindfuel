@@ -98,48 +98,22 @@ export function ContentRecommendations({ mood, moodScore, apiResponse }: Content
     }
 
     // Keep dummy articles data since API doesn't provide articles yet
-    const articlesContent: ContentItem[] = [
-      {
-        id: "article-1",
-        title: "Understanding and Managing Your Current Mood",
-        description:
-          "Evidence-based strategies for maintaining emotional balance and building resilience in your daily life.",
-        thumbnail: "/placeholder.svg?height=120&width=200",
-        author: "Dr. Sarah Johnson, PhD",
-        url: "#",
-        tags: ["psychology", "wellness", "self-help"],
-        type: "article" as const,
-        duration: "5 min read",
-        rating: 4.8,
-        relevance: 92,
-      },
-      {
-        id: "article-2",
-        title: "The Science of Emotional Well-being",
-        description: "How understanding your emotions can lead to better mental health and improved life satisfaction.",
-        thumbnail: "/placeholder.svg?height=120&width=200",
-        author: "Mental Health Research Institute",
-        url: "#",
-        tags: ["research", "mental-health", "science"],
-        type: "article" as const,
-        duration: "7 min read",
-        rating: 4.6,
-        relevance: 88,
-      },
-      {
-        id: "article-3",
-        title: "Building Positive Habits for Mental Wellness",
-        description: "Practical steps to create lasting positive changes in your daily routine and mindset.",
-        thumbnail: "/placeholder.svg?height=120&width=200",
-        author: "Dr. Michael Chen",
-        url: "#",
-        tags: ["habits", "wellness", "lifestyle"],
-        type: "article" as const,
-        duration: "6 min read",
-        rating: 4.7,
-        relevance: 85,
-      },
-    ]
+    const articlesContent: ContentItem[] = []
+    if (apiData?.recommendations?.content?.articles?.articles) {
+      apiData.recommendations.content.articles.articles.forEach((article: any) => {
+        articlesContent.push({
+          id: article.news_url,
+          title: article.title,
+          description: article.snippet,
+          thumbnail: article.thumbnail,
+          author: article?.source?.name || "",
+          channelUrl: article?.source?.url || "",
+          url: article.news_url,
+          tags: article.keywords || [],
+          type: "article" as const,
+        })
+      })
+    }
 
     return {
       youtube: youtubeContent,

@@ -5,6 +5,7 @@ from .spotify_agent import SpotifyAgent
 from .content_generator_agent import ContentGeneratorAgent
 from .mood_analyzer_master import MoodAnalyzerMasterAgent
 from .chat_agent import ChatAgent
+from .meditation_agent import MeditationAgent
 _agents = {}
 
 def get_agent(name: str):
@@ -23,8 +24,10 @@ def get_agent(name: str):
             _agents[name] = MoodAnalyzerMasterAgent()
         elif name == "chat_agent":
             _agents[name] = ChatAgent()
+        elif name == "meditation":
+            _agents[name] = MeditationAgent()
         else:
             raise ValueError(f"Unknown agent: {name}")
     return _agents[name]
 
-AGENT_NAMES = ["mood_analyzer", "sleep_coach", "youtube_agent", "spotify_agent", "mood_analyzer_master", "chat_agent"] 
+AGENT_NAMES = ["mood_analyzer", "sleep_coach", "youtube_agent", "spotify_agent", "mood_analyzer_master", "chat_agent", "meditation"] 

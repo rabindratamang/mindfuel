@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Award, Target, Calendar, Plus, Edit, Trash2 } from "lucide-react"
+import { Award, Target, Calendar, Plus, Edit, Trash2, Brain } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { apiClient } from "@/lib/api-client"
 
@@ -32,6 +32,9 @@ interface Profile {
   country: string | null
   location: string | null
   phoneNumber: string | null
+  // New meditation settings fields
+  meditationType: string | null
+  meditationExperience: string | null
 }
 
 interface Stats {
@@ -101,6 +104,9 @@ export default function ProfilePage() {
       country: null as string | null,
       location: null as string | null,
       phoneNumber: null as string | null,
+      // New meditation settings
+      meditationType: null as string | null,
+      meditationExperience: null as string | null,
     },
     preferences: {
       notifications: {
@@ -306,7 +312,7 @@ export default function ProfilePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button className="w-full" variant="outline">
+              <Button className="w-full bg-transparent" variant="outline">
                 Change Photo
               </Button>
               <div className="grid grid-cols-2 gap-4 text-center">
@@ -357,6 +363,7 @@ export default function ProfilePage() {
               <TabsTrigger value="personal">Personal Info</TabsTrigger>
               <TabsTrigger value="preferences">Preferences</TabsTrigger>
               <TabsTrigger value="goals">Goals</TabsTrigger>
+              <TabsTrigger value="meditation">Meditation</TabsTrigger>
               <TabsTrigger value="privacy">Privacy</TabsTrigger>
             </TabsList>
 
@@ -705,6 +712,84 @@ export default function ProfilePage() {
               </Card>
             </TabsContent>
 
+            <TabsContent value="meditation" className="m-0">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5 text-purple-500" />
+                    Meditation Settings
+                  </CardTitle>
+                  <CardDescription>Set your basic meditation preferences that won't change often</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="meditationType">Preferred Meditation Type</Label>
+                    <Select
+                      value={formData.profile.meditationType || ""}
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          profile: { ...formData.profile, meditationType: value || null },
+                        })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your preferred meditation type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mindfulness">Mindfulness - Present moment awareness</SelectItem>
+                        <SelectItem value="breathing">Breathing - Breath-focused techniques</SelectItem>
+                        <SelectItem value="loving-kindness">Loving-Kindness - Compassion & self-love</SelectItem>
+                        <SelectItem value="body-scan">Body Scan - Progressive relaxation</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="meditationExperience">Experience Level</Label>
+                    <Select
+                      value={formData.profile.meditationExperience || ""}
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          profile: { ...formData.profile, meditationExperience: value || null },
+                        })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your experience level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="beginner">Beginner - New to meditation</SelectItem>
+                        <SelectItem value="intermediate">Intermediate - Some experience</SelectItem>
+                        <SelectItem value="advanced">Advanced - Regular practitioner</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                    <h4 className="font-medium text-purple-800 dark:text-purple-200 mb-2">
+                      Why set these preferences?
+                    </h4>
+                    <ul className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
+                      <li>• Personalized AI meditation generation</li>
+                      <li>• Better content recommendations</li>
+                      <li>• Appropriate difficulty levels</li>
+                      <li>• Streamlined meditation sessions</li>
+                    </ul>
+                  </div>
+
+                  <Button
+                    onClick={handleSavePersonalInfo}
+                    disabled={saving}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500"
+                  >
+                    {saving ? "Saving..." : "Save Meditation Settings"}
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="privacy" className="m-0">
               <Card>
                 <CardHeader>
@@ -742,10 +827,10 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="space-y-4 pt-4 border-t">
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full bg-transparent">
                       Download My Data
                     </Button>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full bg-transparent">
                       Delete Account
                     </Button>
                   </div>

@@ -617,6 +617,7 @@ export default function MeditationPage() {
                   // Generate AI content based on simplified survey data
                   try {
                     const response = await apiClient.post("/agent/meditation", {
+                      input: "Generate a meditation session based on the user's context and current time.",
                       context: {
                         ...userPreferences,
                         time_of_day: new Date().getHours(),

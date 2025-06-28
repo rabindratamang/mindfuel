@@ -10,6 +10,10 @@ COPY . .
 
 # Create a non-root user
 RUN useradd -m appuser
+
+# Create chroma_db directory and set permissions
+USER root
+RUN mkdir -p /app/chroma_db && chown -R appuser:appuser /app/chroma_db && chmod 755 /app/chroma_db
 USER appuser
 
 EXPOSE 8000

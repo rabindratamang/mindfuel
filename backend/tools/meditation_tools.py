@@ -31,7 +31,7 @@ persist_directory = "chroma_db"
 db = ch.from_documents(
     documents=texts,
     embedding=embeddings,
-    persist_directory=None
+    persist_directory=persist_directory
 )
 
 # Create retriever

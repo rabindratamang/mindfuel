@@ -3,11 +3,12 @@ from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage
 
 from tools.meditation_tools import rag_tool
-from config.setting import OPENAI_API_KEY
+from tools.email_tools import guided_meditation_tool2
+from config.setting import settings
 
 class MeditationAgent:
     def __init__(self):
-        self.openai_api_key = OPENAI_API_KEY
+        self.openai_api_key = settings.OPENAI_API_KEY
         self.model = ChatOpenAI(api_key=self.openai_api_key, model="gpt-4o-mini", verbose=True)
         self.agent = create_react_agent(
             model=self.model,

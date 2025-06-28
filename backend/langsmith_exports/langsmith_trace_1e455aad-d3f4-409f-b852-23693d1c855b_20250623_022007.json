@@ -1,0 +1,82 @@
+{
+  "id": "1e455aad-d3f4-409f-b852-23693d1c855b",
+  "name": "RunnableSequence",
+  "start_time": "2025-06-22 20:32:51.005752",
+  "run_type": "chain",
+  "end_time": "2025-06-22 20:33:00.909557",
+  "extra": {
+    "runtime": {
+      "sdk": "langsmith-py",
+      "sdk_version": "0.3.45",
+      "library": "langchain-core",
+      "platform": "Linux-6.11.0-26-generic-x86_64-with-glibc2.39",
+      "runtime": "python",
+      "py_implementation": "CPython",
+      "runtime_version": "3.12.3",
+      "langchain_version": "0.3.25",
+      "langchain_core_version": "0.3.64",
+      "library_version": "0.3.64"
+    },
+    "metadata": {
+      "LANGSMITH_TRACING": "true",
+      "LANGSMITH_ENDPOINT": "https://api.smith.langchain.com",
+      "LANGSMITH_PROJECT": "mindfuel",
+      "revision_id": "e80fd70-dirty",
+      "ls_run_depth": 0
+    }
+  },
+  "error": null,
+  "serialized": null,
+  "events": [
+    {
+      "name": "start",
+      "time": "2025-06-22T20:32:51.005752+00:00"
+    },
+    {
+      "name": "end",
+      "time": "2025-06-22T20:33:00.909557+00:00"
+    }
+  ],
+  "inputs": {
+    "context": "\n                - MindFuel is a mental wellness app that helps users track mood, get personalized content recommendations, and improve mental health\n                - Users share their thoughts, feelings, and current state\n                - Your analysis will be used to provide personalized YouTube videos, articles, Spotify playlists, and meditation recommendations\n                - Be empathetic, supportive, and professional in your analysis\n            ",
+    "input": "i want to listen some metal music frm dream theater"
+  },
+  "outputs": {
+    "output": " } \n           \n{\n    \"analysis\": {\n        \"primaryMood\": \"Excited\",\n        \"moodCategory\": \"positive\",\n        \"confidence\": 85,\n        \"intensity\": 7,\n        \"emotions\": [\n            {\n                \"emotion\": \"Joy\",\n                \"score\": 80\n            },\n            {\n                \"emotion\": \"Anticipation\",\n                \"score\": 75\n            }\n        ],\n        \"sentiment\": {\n            \"polarity\": 0.8,\n            \"subjectivity\": 0.9\n        }\n    },\n    \"insights\": {\n        \"summary\": \"You are feeling excited about listening to metal music from Dream Theater. This indicates a positive emotional state with anticipation for the experience.\",\n        \"keyThemes\": [\"music\", \"personal interest\"],\n        \"triggers\": [\"desire for music\", \"interest in metal genre\"],\n        \"strengths\": [\"appreciation for music\", \"enthusiasm\"],\n        \"concerns\": []\n    },\n    \"recommendations\": {\n        \"immediate\": [\n            \"Create a playlist of your favorite Dream Theater songs\",\n            \"Explore similar metal bands\",\n            \"Attend a local metal concert\",\n            \"Discuss your favorite tracks with friends\",\n            \"Share your excitement on social media\",\n            \"Try to learn a Dream Theater song on an instrument\"\n        ],\n        \"content\": {\n            \"youtube\": {\n                \"types\": [\"music\", \"live performance\"],\n                \"keywords\": [\"Dream Theater\", \"metal music\", \"progressive metal\", \"live concert\", \"music analysis\"],\n                \"duration\": \"medium\",\n                \"mood\": \"excited\",\n                \"num_videos\": 6\n            },\n            \"articles\": {\n                \"topics\": [\"music\", \"metal genre\"],\n                \"difficulty\": \"beginner\",\n                \"focus\": [\"understanding music styles\", \"exploring metal bands\"]\n            },\n            \"spotify\": {\n                \"keywords\": [\"Dream Theater\", \"metal\", \"progressive\", \"rock\", \"heavy\"],\n                \"genres\": [\"metal\", \"rock\"],\n                \"energy\": 1,\n                \"valence\": 1,\n                \"mood\": \"uplifting\",\n                \"num_playlists\": 6\n            },\n            \"meditation\": {\n                \"types\": [\"none\"],\n                \"duration\": 0,\n                \"difficulty\": \"none\"\n            }\n        }\n    },\n    \"followUp\": {\n        \"questions\": [\n            \"What specific songs are you looking forward to?\",\n            \"How does listening to music generally affect your mood?\",\n            \"Have you attended any concerts recently?\"\n        ],\n        \"checkIn\": \"24 hours\",\n        \"goals\": [\"Create a music playlist\", \"Explore new metal bands\", \"Share music with friends\"]\n    },\n    \"riskAssessment\": {\n        \"level\": \"low\",\n        \"indicators\": [],\n        \"recommendations\": [],\n        \"urgency\": \"none\"\n    },\n    \"metadata\": {\n        \"wordCount\": 21,\n        \"complexity\": \"simple\",\n        \"timeOfDay\": \"afternoon\",\n        \"context\": [\"home\"]\n    }\n}"
+  },
+  "reference_example_id": null,
+  "parent_run_id": null,
+  "tags": [],
+  "attachments": {},
+  "session_id": "4903534f-c08e-4584-be22-d27b53d7bedf",
+  "child_run_ids": [
+    "ec1774de-1ccf-4a7d-8b16-35ce7c6da0f2",
+    "aeb179d1-c12d-460e-a31c-21f9ba542b32"
+  ],
+  "child_runs": null,
+  "feedback_stats": null,
+  "app_path": "/o/8562cb79-4098-46cb-af08-f45db78c3ad5/projects/p/4903534f-c08e-4584-be22-d27b53d7bedf/r/1e455aad-d3f4-409f-b852-23693d1c855b?trace_id=1e455aad-d3f4-409f-b852-23693d1c855b&start_time=2025-06-22T20:32:51.005752",
+  "manifest_id": null,
+  "status": "success",
+  "prompt_tokens": 1379,
+  "completion_tokens": 654,
+  "total_tokens": 2033,
+  "prompt_token_details": null,
+  "completion_token_details": null,
+  "first_token_time": null,
+  "total_cost": "0.00059925",
+  "prompt_cost": "0.00020685",
+  "completion_cost": "0.0003924",
+  "prompt_cost_details": null,
+  "completion_cost_details": null,
+  "parent_run_ids": [],
+  "trace_id": "1e455aad-d3f4-409f-b852-23693d1c855b",
+  "dotted_order": "20250622T203251005752Z1e455aad-d3f4-409f-b852-23693d1c855b",
+  "in_dataset": false,
+  "export_info": {
+    "exported_at": "2025-06-22T20:35:07.999147",
+    "run_id": "1e455aad-d3f4-409f-b852-23693d1c855b",
+    "export_version": "1.0",
+    "include_metadata": true
+  }
+}

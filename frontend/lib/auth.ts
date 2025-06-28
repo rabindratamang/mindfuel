@@ -25,7 +25,7 @@ export interface JWTPayload {
 class AuthService {
   private readonly ACCESS_TOKEN_KEY = "mindfuel_access_token"
   private readonly REFRESH_TOKEN_KEY = "mindfuel_refresh_token"
-  private readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+  private readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
   // Token management
   setTokens(tokens: AuthTokens): void {
@@ -76,6 +76,7 @@ class AuthService {
         email: decoded.email,
         firstName: decoded.firstName,
         lastName: decoded.lastName,
+        isOnboardComplete: decoded.isOnboardComplete,
       }
     } catch {
       return null

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut } from "lucide-react"
+import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut, MessageCircle, Smile } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatedIcon } from "@/components/animated-icon"
@@ -34,8 +34,15 @@ export function DashboardSidebar() {
         <nav className="px-2 space-y-1">
           <SidebarLink href="/dashboard" icon={Home} label="Dashboard" isActive={isActive("/dashboard")} delay={0} />
           <SidebarLink
+            href="/dashboard/chat"
+            icon={MessageCircle}
+            label="Chat with AI"
+            isActive={isActive("/dashboard/chat")}
+            delay={0.05}
+          />
+          <SidebarLink
             href="/dashboard/mood"
-            icon={BarChart}
+            icon={Smile}
             label="Mood Analysis"
             isActive={isActive("/dashboard/mood")}
             delay={0.1}

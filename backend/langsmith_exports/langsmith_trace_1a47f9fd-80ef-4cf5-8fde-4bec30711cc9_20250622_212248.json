@@ -1,0 +1,238 @@
+{
+  "id": "1a47f9fd-80ef-4cf5-8fde-4bec30711cc9",
+  "name": "youtube_assistant",
+  "start_time": "2025-06-22 15:02:48.823583",
+  "run_type": "chain",
+  "end_time": "2025-06-22 15:03:14.825064",
+  "extra": {
+    "runtime": {
+      "sdk": "langsmith-py",
+      "sdk_version": "0.3.45",
+      "library": "langchain-core",
+      "platform": "Linux-6.11.0-26-generic-x86_64-with-glibc2.39",
+      "runtime": "python",
+      "py_implementation": "CPython",
+      "runtime_version": "3.12.3",
+      "langchain_version": "0.3.25",
+      "langchain_core_version": "0.3.64",
+      "library_version": "0.3.64"
+    },
+    "metadata": {
+      "LANGSMITH_TRACING": "true",
+      "LANGSMITH_ENDPOINT": "https://api.smith.langchain.com",
+      "LANGSMITH_PROJECT": "mindfuel",
+      "revision_id": "e80fd70-dirty",
+      "ls_run_depth": 0
+    }
+  },
+  "error": null,
+  "serialized": null,
+  "events": [
+    {
+      "name": "start",
+      "time": "2025-06-22T15:02:48.823583+00:00"
+    },
+    {
+      "name": "end",
+      "time": "2025-06-22T15:03:14.825064+00:00"
+    }
+  ],
+  "inputs": {
+    "messages": [
+      {
+        "content": "Find 6 YouTube videos that includes the following:\n- Types: meditation, breathing exercises\n- Keywords: sleep meditation, relaxation, guided meditation, insomnia help, calming sounds\n- Mood: relaxing\n- Duration: short (e.g., 0-10min=short, 10-30min=medium, 30min+=long)\n\nOnly return array of JSON with: title, video_url, duration_seconds, thumbnail, and channel details. even if there is only one videoDo not include any commentary or explanation outside the JSON array. Only return valid JSON array. Example do not wrap it in ```json or any markdown formatting",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "id": "f37b03eb-753d-4f77-8963-0ddece1af57b",
+        "example": false
+      }
+    ]
+  },
+  "outputs": {
+    "messages": [
+      {
+        "content": "Find 6 YouTube videos that includes the following:\n- Types: meditation, breathing exercises\n- Keywords: sleep meditation, relaxation, guided meditation, insomnia help, calming sounds\n- Mood: relaxing\n- Duration: short (e.g., 0-10min=short, 10-30min=medium, 30min+=long)\n\nOnly return array of JSON with: title, video_url, duration_seconds, thumbnail, and channel details. even if there is only one videoDo not include any commentary or explanation outside the JSON array. Only return valid JSON array. Example do not wrap it in ```json or any markdown formatting",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "id": "f37b03eb-753d-4f77-8963-0ddece1af57b",
+        "example": false
+      },
+      {
+        "content": "",
+        "additional_kwargs": {
+          "tool_calls": [
+            {
+              "id": "call_UM9d2xUbY7WuXiiDh3HsdCcF",
+              "function": {
+                "arguments": "{\"query\":\"sleep meditation relaxation guided meditation insomnia help calming sounds\",\"region\":\"US\",\"language\":\"en\"}",
+                "name": "search_youtube_videos"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 33,
+            "prompt_tokens": 455,
+            "total_tokens": 488,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": 0,
+              "audio_tokens": 0,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": 0
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cached_tokens": 0
+            }
+          },
+          "model_name": "gpt-4o-mini-2024-07-18",
+          "system_fingerprint": "fp_34a54ae93c",
+          "id": "chatcmpl-BlGVVJu5Q4bvY1yTZgR5PXf9FdHCf",
+          "service_tier": "default",
+          "finish_reason": "tool_calls",
+          "logprobs": null
+        },
+        "type": "ai",
+        "name": "youtube_assistant",
+        "id": "run--c6e858a9-aecf-4b19-b42b-ab510a11d29d-0",
+        "example": false,
+        "tool_calls": [
+          {
+            "name": "search_youtube_videos",
+            "args": {
+              "query": "sleep meditation relaxation guided meditation insomnia help calming sounds",
+              "region": "US",
+              "language": "en"
+            },
+            "id": "call_UM9d2xUbY7WuXiiDh3HsdCcF",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 455,
+          "output_tokens": 33,
+          "total_tokens": 488,
+          "input_token_details": {
+            "audio": 0,
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "audio": 0,
+            "reasoning": 0
+          }
+        }
+      },
+      {
+        "content": "[{\"video_id\": \"MGK1cK72RsM\", \"video_url\": \"https://www.youtube.com/watch?v=MGK1cK72RsM\", \"title\": \"Guided Sleep Meditation,  *NEW* Spoken Meditations for Insomnia, Healing, With Affirmations\", \"description\": \"A collection of Brand new spoken sleep meditations  - all joined together seamlessly for one 3 hour-long play. Wishing you better sleep, peaceful meditations before sleep and inspired living. #sleepmeditation #guidedsleepmeditation #jasonstephenson \\n\\nDeep Positivity Guided Sleep Meditation, Before Sleeping Meditation with Affirmations ✨\\nhttps://www.youtube.com/watch?v=9O2iQlFGHyM&list=PLwRp13WDIrMPzLqtyvvPrs7sMR_lvZ8Bf\\n\\nGuided Sleep Meditation, Soothe and Release Anxiety, Stress Meditation with Affirmations 💙https://www.youtube.com/watch?v=xVkXaJSiV30&list=PLwRp13WDIrMPzLqtyvvPrs7sMR_lvZ8Bf\\n\\nGuided Sleep Meditation for a Positive Mindset, Sleep Talk-Down With Affirmations ✨\\nhttps://www.youtube.com/watch?v=9HuUtshnOEA&list=PLwRp13WDIrMPzLqtyvvPrs7sMR_lvZ8Bf\\n\\n\\nGet more great sleep - Subscribe https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w?sub_confirmation=1\\n\\nFREE resources: https://jasonstephenson.net/lp/free-resources/\\n\\nFollow Jason on social media:\\nFacebook: https://www.facebook.com/JasonStephensonMeditation\\nInstagram: https://www.instagram.com/jasonstephensonmeditation/\\nTikTok:  https://www.tiktok.com/@jasonstephensonmeditate\\n\\n\\nListen to more meditation and music:\\nSpotify: https://open.spotify.com/artist/1DbGUgDfEgFlJpUVCdiBxa\\nApple Music: https://music.apple.com/us/artist/jason-stephenson/164036371\\nInsight Timer: https://insighttimer.com/jasonstephenson\\nYouTube Music:   https://www.youtube.com/channel/UCoE8W2zJppAlRYfJ-Nu2rOw\\nAmazon Music: https://www.amazon.com/Digital-Music-Jason-Stephenson/s?rh=n%3A163856011%2Cp_27%3AJason+Stephenson\\nDeezer: https://www.deezer.com/en/artist/4994599\\n\\nWould you like to buy my merchandise? \\nhttps://jason-stephenson.creator-spring.com/\\n\\n\\n© JASON STEPHENSON & RELAX ME ONLINE AUSTRALIA PTY LTD Copyright 2019 All rights reserved.\\n\\nThis work is not intended to substitute for professional medical or counselling advice. If you suffer from a physical or mental illness, please always seek professional help.  \\n\\n\\nDO NOT DRIVE OR OPERATE MACHINERY WHILST LISTENING TO SLEEP MEDITATION MUSIC, BINAURAL BEATS OR GUIDED SLEEP RELAXATIONS.\", \"duration_seconds\": 10385, \"published_time\": \"2019-06-19T02:45:02Z\", \"views\": 1582207, \"thumbnail\": \"https://i.ytimg.com/vi/MGK1cK72RsM/hqdefault.jpg\", \"channel\": {\"title\": \"Jason Stephenson - Guided Sleep Meditation \", \"channel_id\": \"UCqPYhcdFgrlUXiGmPRAej1w\", \"avatar\": \"https://yt3.ggpht.com/a2O8Y3JoH7FvwpByzOokUFNiqM9QvG3hbXB6TTzP6omedDuA98bfxvuqN9RPDJkLWFcIYmgf=s240-c-k-c0x00ffffff-no-rj\", \"channel_url\": \"https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w\"}}, {\"video_id\": \"nMDHjVVj3bA\", \"video_url\": \"https://www.youtube.com/watch?v=nMDHjVVj3bA\", \"title\": \"Fall Asleep Fast Deep Sleep Meditation for Insomnia | Mindful Movement\", \"description\": \"Fall asleep fast with this deep sleep, guided meditation for insomnia.  \\n\\nWhether you have found this meditation because you experience difficulty falling asleep or you have awakened in the night, this relaxing guided meditation will help you get to sleep.  By slowing down with your breath, you will be able to slow down your body and send a message of comfort and safety to your nervous system.  There is a powerful connection between your breath and your nervous system.  By using your breath as a tool, you can interact with your autonomic nervous system.  Tonight, you can use this tool to settle your body into a deep state of relaxation, where your nervous system is calm and you can experience the feeling of safety and peace. As this calmness expands through your entire body and mind, your nervous system will receive the signal that it is time for rest.\\n\\nMeditation was written and read by Sara Raymond\\nMusic Credit:  Adrift with Delta waves by Christopher Lloyd Clark licensed by Enlighten Audio\\n\\nSara's Book\\nYou Are Not Broken: A compassionate guide to uncovering inner wisdom and transforming your life with hypnotherapy\\nhttps://amzn.to/3CUdABJ\\n\\nDo not listen while driving. Meditation and mindful movement are powerful tools to support you. This is not a substitute for medical care. Consult a doctor or trusted health professional if needed.\\n---------------------------------------------\\n1:1 Sessions\\nPERSONALIZED HYPNOTHERAPY & TRANSFORMATIONAL COACHING\\nhttps://www.themindfulmovement.com/sara\\n\\n#healing #meditation #sleepmeditation\", \"duration_seconds\": 2299, \"published_time\": \"2020-03-11T23:36:52Z\", \"views\": 4594098, \"thumbnail\": \"https://i.ytimg.com/vi/nMDHjVVj3bA/hqdefault.jpg\", \"channel\": {\"title\": \"The Mindful Movement\", \"channel_id\": \"UCu_mPlZbomAgNzfAUElRL7w\", \"avatar\": \"https://yt3.ggpht.com/4trLqsoxWBCVhi8qGRYEkafZnl4vyIfUSnAif21yAiJwCqO-mQpWpBL8ottubbqy1sQr07L8KWI=s240-c-k-c0x00ffffff-no-rj\", \"channel_url\": \"https://www.youtube.com/channel/UCu_mPlZbomAgNzfAUElRL7w\"}}, {\"video_id\": \"dLxyqBjvkRg\", \"video_url\": \"https://www.youtube.com/watch?v=dLxyqBjvkRg\", \"title\": \"Deep Sleep Guided Meditation, Sleep Talk Down to Fall Asleep Fast\", \"description\": \"Whatever is keeping you awake tonight, we invite you to escape from your worries and pain this evening. Sink deeper and deeper into a state of complete relaxation and fall asleep in minutes with tonight’s guided meditation.\\n\\nTransform your life with my free meditations – unlock peace, healing, and sleep like never before. Download now https://jasonstephenson.net/lp/free-resources/\\n\\nGet more great sleep - Subscribe https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w?sub_confirmation=1\\n\\nPresave my latest audio on your favourite platform\\nhttps://unitedmasters.com/a/jasonstephenson\\n\\nListen to more meditation and music:\\nSpotify: https://open.spotify.com/artist/1DbGUgDfEgFlJpUVCdiBxa\\nApple Music: https://music.apple.com/us/artist/jason-stephenson/164036371\\nInsight Timer: https://insighttimer.com/jasonstephenson\\nYouTube Music:   https://www.youtube.com/channel/UCoE8W2zJppAlRYfJ-Nu2rOw\\nAmazon Music: https://www.amazon.com/Digital-Music-Jason-Stephenson/s?rh=n%3A163856011%2Cp_27%3AJason+Stephenson\\nDeezer: https://www.deezer.com/en/artist/4994599\\n\\nFollow me on social media:\\nFacebook: https://www.facebook.com/JasonStephensonMeditation\\nInstagram: https://www.instagram.com/jasonstephensonmeditation/\\nTikTok: https://www.tiktok.com/@jasonstephensonmeditate\\n\\nWrap yourself in peace and positivity with my inspiring collection of mindful comfy wear.\\nhttps://jason-stephenson.creator-spring.com/\\n\\n© JASON STEPHENSON & RELAX ME ONLINE AUSTRALIA PTY LTD Copyright 2025 All rights reserved.\\n\\nThis work is not intended to substitute for professional medical or counselling advice. If you suffer from a physical or mental illness, please always seek professional help.  \\n\\nDO NOT DRIVE OR OPERATE MACHINERY WHILST LISTENING TO SLEEP MEDITATION MUSIC, BINAURAL BEATS OR GUIDED SLEEP RELAXATIONS.\\n\\n#forsleep #sleeptalkdown #sleepmeditation #jasonstephenson #guidedsleepmeditation #guidedmeditation #fallasleepfast #fallasleepinstantly #sleephypnosis\", \"duration_seconds\": 10800, \"published_time\": \"2025-04-07T01:15:04Z\", \"views\": 253919, \"thumbnail\": \"https://i.ytimg.com/vi/dLxyqBjvkRg/hqdefault.jpg\", \"channel\": {\"title\": \"Jason Stephenson - Guided Sleep Meditation \", \"channel_id\": \"UCqPYhcdFgrlUXiGmPRAej1w\", \"avatar\": \"https://yt3.ggpht.com/a2O8Y3JoH7FvwpByzOokUFNiqM9QvG3hbXB6TTzP6omedDuA98bfxvuqN9RPDJkLWFcIYmgf=s240-c-k-c0x00ffffff-no-rj\", \"channel_url\": \"https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w\"}}, {\"video_id\": \"U6Ay9v7gK9w\", \"video_url\": \"https://www.youtube.com/watch?v=U6Ay9v7gK9w\", \"title\": \"Fall Asleep In MINUTES! Sleep Talk-Down Guided Meditation Hypnosis for Sleeping\", \"description\": \"A beautiful guided sleep meditation that will have you falling asleep in minutes! This is a sleep talk down hypnosis to help you release the day behind you and to fall asleep. \\n\\nTransform your life with my free meditations – unlock peace, healing, and sleep like never before. Download now https://jasonstephenson.net/lp/free-resources/\\n\\nGet more great sleep - Subscribe https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w?sub_confirmation=1\\n\\nPresave my latest audio on your favourite platform\\nhttps://unitedmasters.com/a/jasonstephenson\\n\\nListen to more meditation and music:\\nSpotify: https://open.spotify.com/artist/1DbGUgDfEgFlJpUVCdiBxa\\nApple Music: https://music.apple.com/us/artist/jason-stephenson/164036371\\nInsight Timer: https://insighttimer.com/jasonstephenson\\nYouTube Music:   https://www.youtube.com/channel/UCoE8W2zJppAlRYfJ-Nu2rOw\\nAmazon Music: https://www.amazon.com/Digital-Music-Jason-Stephenson/s?rh=n%3A163856011%2Cp_27%3AJason+Stephenson\\nDeezer: https://www.deezer.com/en/artist/4994599\\n\\nFollow me on social media:\\nFacebook: https://www.facebook.com/JasonStephensonMeditation\\nInstagram: https://www.instagram.com/jasonstephensonmeditation/\\nTikTok: https://www.tiktok.com/@jasonstephensonmeditate\\n\\nWrap yourself in peace and positivity with my inspiring collection of mindful comfy wear.\\nhttps://jason-stephenson.creator-spring.com/\\n\\n© JASON STEPHENSON & RELAX ME ONLINE AUSTRALIA PTY LTD Copyright 2024 All rights reserved.\\n\\nThis work is not intended to substitute for professional medical or counselling advice. If you suffer from a physical or mental illness, please always seek professional help.  \\n\\nDO NOT DRIVE OR OPERATE MACHINERY WHILST LISTENING TO SLEEP MEDITATION MUSIC, BINAURAL BEATS OR GUIDED SLEEP RELAXATIONS.\\n\\n#fallasleepinminutes #sleeptalkdown #jasonstephenson\", \"duration_seconds\": 10801, \"published_time\": \"2020-11-30T02:15:00Z\", \"views\": 23445719, \"thumbnail\": \"https://i.ytimg.com/vi/U6Ay9v7gK9w/hqdefault.jpg\", \"channel\": {\"title\": \"Jason Stephenson - Guided Sleep Meditation \", \"channel_id\": \"UCqPYhcdFgrlUXiGmPRAej1w\", \"avatar\": \"https://yt3.ggpht.com/a2O8Y3JoH7FvwpByzOokUFNiqM9QvG3hbXB6TTzP6omedDuA98bfxvuqN9RPDJkLWFcIYmgf=s240-c-k-c0x00ffffff-no-rj\", \"channel_url\": \"https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w\"}}, {\"video_id\": \"hkyKHk7s13s\", \"video_url\": \"https://www.youtube.com/watch?v=hkyKHk7s13s\", \"title\": \"Fall Asleep in Under 20 Minutes - Guided Sleep, Insomnia\", \"description\": \"This blissful & calming track can help to get many people off to sleep within 20 minutes. (details below) Join our community/see our products: https://www.thehonestguys.co.uk/products\\n\\nIt features high quality nature sounds including rain, and a gentle, English male guiding voice\\n\\n___________________________________\\n\\nTHE HONEST GUYS\\nWe create effortless ways for anyone to reach a profound sense of deep relaxation, meditation and sleep, without ever having to try.  In particular, we cater to anyone who is turned-off by the idea of \\\"meditation\\\", but still want to reap the massive health benefits, that meditation can bring. We offer this through high-quality audio productions, called 'guided visualisations'. These include sleep talk-downs, meditations, wonderful fantasy imagery and stories. \\n\\nPlease subscribe to our channel (It's Free), and (importantly), DO click the bell icon, so you receive notifications of all our new uploads : http://www.youtube.com/thehonestguys?sub_confirmation=1\\n\\nIf you enjoy our work and would like to support the channel, please consider purchasing one of our high-quality products: https://www.thehonestguys.co.uk/products\\n\\nJoin one of our membership Programs to get advert-free access to virtually every video we have ever made! :  https://www.thehonestguys.co.uk/vip-membership-info\\n\\nOr alternatively, if you would like to support us in other ways:  click here:  https://www.thehonestguys.co.uk/sponsorship\\n\\n____________________________________\\n\\nSOCIAL MEDIA - Interact with us here:\\n\\nFacebook: Our main community-focused page. Interact on a daily basis: http://www.facebook.com/THGMEDITATIONS\\n\\nTwitter: http://twitter.com/TheHonestGuys\\n\\nInstagram: http://instagram.com/thehonestguys\\n\\nWebsite: Official website of The Honest Guys: http://www.thehonestguys.co.uk\\n..................................................\\n\\nMusic accreditation:\\nTrack title: Fragile (F Hegedus)\\nArtist: Ferenc Hegedus\\nComposer: Ferenc Hegedus (PRS)\\nPublisher: Lynne Publishing (PRS - CAE#: 541626758)\\n\\n\\n\\n\\n#fallasleepfast #listenbeforesleep  #guidedsleepmeditation #sleeptalkdown #guidedmeditation #thehonestguys\", \"duration_seconds\": 1214, \"published_time\": \"2016-05-31T16:30:00Z\", \"views\": 3670927, \"thumbnail\": \"https://i.ytimg.com/vi/hkyKHk7s13s/hqdefault.jpg\", \"channel\": {\"title\": \"The Honest Guys - Meditations - Relaxation\", \"channel_id\": \"UC4jWo5kiyOCt4PnvF4jbaLg\", \"avatar\": \"https://yt3.ggpht.com/ytc/AIdro_liTLVckd0TukldfcShQxNOSh58BOpaSFU2ygBpxqRbpt8=s240-c-k-c0x00ffffff-no-rj\", \"channel_url\": \"https://www.youtube.com/channel/UC4jWo5kiyOCt4PnvF4jbaLg\"}}, {\"video_id\": \"UGWR5Bu8A6Q\", \"video_url\": \"https://www.youtube.com/watch?v=UGWR5Bu8A6Q\", \"title\": \"🎧 Guided Sleep Meditation - Pure Deep Relaxation\", \"description\": \"This guided sleep meditation focuses on relaxing the body and mind. (details below) Join our community/see our products: https://www.thehonestguys.co.uk/products\\n\\nUsing this guided meditation will help you experience a pure deep relaxation, with the option to gently ease you into sleep.\\n\\n___________________________________\\n\\nTHE HONEST GUYS\\nWe create effortless ways for anyone to reach a profound sense of deep relaxation, meditation and sleep, without ever having to try.  In particular, we cater to anyone who is turned-off by the idea of \\\"meditation\\\", but still want to reap the massive health benefits, that meditation can bring. We offer this through high-quality audio productions, called 'guided visualisations'. These include sleep talk-downs, meditations, wonderful fantasy imagery and stories. \\n\\nPlease subscribe to our channel (It's Free), and (importantly), DO click the bell icon, so you receive notifications of all our new uploads : http://www.youtube.com/thehonestguys?sub_confirmation=1\\n\\nIf you enjoy our work and would like to support the channel, please consider purchasing one of our high-quality products: https://www.thehonestguys.co.uk/products\\n\\nJoin one of our membership Programs to get advert-free access to virtually every video we have ever made! :  https://www.thehonestguys.co.uk/vip-membership-info\\n\\nOr alternatively, if you would like to support us in other ways:  click here:  https://www.thehonestguys.co.uk/sponsorship\\n\\n____________________________________\\n\\nSOCIAL MEDIA - Interact with us here:\\n\\nFacebook: Our main community-focused page. Interact on a daily basis: http://www.facebook.com/THGMEDITATIONS\\n\\nTwitter: http://twitter.com/TheHonestGuys\\n\\nInstagram: http://instagram.com/thehonestguys\\n\\nWebsite: Official website of The Honest Guys: http://www.thehonestguys.co.uk\\n\\nMusic accreditation:\\n(Ascension) by Christopher Lloyd Clarke. http://www.christopherlloydclarke.com\\n\\n\\n\\n#deeprelaxing #deeprelaxation #deepsleepguidedmeditation #guidedmeditation #thehonestguys\", \"duration_seconds\": 1881, \"published_time\": \"2018-03-20T16:59:50Z\", \"views\": 3272187, \"thumbnail\": \"https://i.ytimg.com/vi/UGWR5Bu8A6Q/hqdefault.jpg\", \"channel\": {\"title\": \"The Honest Guys - Meditations - Relaxation\", \"channel_id\": \"UC4jWo5kiyOCt4PnvF4jbaLg\", \"avatar\": \"https://yt3.ggpht.com/ytc/AIdro_liTLVckd0TukldfcShQxNOSh58BOpaSFU2ygBpxqRbpt8=s240-c-k-c0x00ffffff-no-rj\", \"channel_url\": \"https://www.youtube.com/channel/UC4jWo5kiyOCt4PnvF4jbaLg\"}}]",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "tool",
+        "name": "search_youtube_videos",
+        "id": "1c9af0a8-011e-418b-a178-c82af40f140a",
+        "tool_call_id": "call_UM9d2xUbY7WuXiiDh3HsdCcF",
+        "status": "success"
+      },
+      {
+        "content": "[\n  {\n    \"title\": \"Guided Sleep Meditation,  *NEW* Spoken Meditations for Insomnia, Healing, With Affirmations\",\n    \"video_url\": \"https://www.youtube.com/watch?v=MGK1cK72RsM\",\n    \"duration_seconds\": 10385,\n    \"thumbnail\": \"https://i.ytimg.com/vi/MGK1cK72RsM/hqdefault.jpg\",\n    \"channel\": {\n      \"title\": \"Jason Stephenson - Guided Sleep Meditation \",\n      \"channel_id\": \"UCqPYhcdFgrlUXiGmPRAej1w\",\n      \"avatar\": \"https://yt3.ggpht.com/a2O8Y3JoH7FvwpByzOokUFNiqM9QvG3hbXB6TTzP6omedDuA98bfxvuqN9RPDJkLWFcIYmgf=s240-c-k-c0x00ffffff-no-rj\",\n      \"channel_url\": \"https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w\"\n    }\n  },\n  {\n    \"title\": \"Fall Asleep Fast Deep Sleep Meditation for Insomnia | Mindful Movement\",\n    \"video_url\": \"https://www.youtube.com/watch?v=nMDHjVVj3bA\",\n    \"duration_seconds\": 2299,\n    \"thumbnail\": \"https://i.ytimg.com/vi/nMDHjVVj3bA/hqdefault.jpg\",\n    \"channel\": {\n      \"title\": \"The Mindful Movement\",\n      \"channel_id\": \"UCu_mPlZbomAgNzfAUElRL7w\",\n      \"avatar\": \"https://yt3.ggpht.com/4trLqsoxWBCVhi8qGRYEkafZnl4vyIfUSnAif21yAiJwCqO-mQpWpBL8ottubbqy1sQr07L8KWI=s240-c-k-c0x00ffffff-no-rj\",\n      \"channel_url\": \"https://www.youtube.com/channel/UCu_mPlZbomAgNzfAUElRL7w\"\n    }\n  },\n  {\n    \"title\": \"Deep Sleep Guided Meditation, Sleep Talk Down to Fall Asleep Fast\",\n    \"video_url\": \"https://www.youtube.com/watch?v=dLxyqBjvkRg\",\n    \"duration_seconds\": 10800,\n    \"thumbnail\": \"https://i.ytimg.com/vi/dLxyqBjvkRg/hqdefault.jpg\",\n    \"channel\": {\n      \"title\": \"Jason Stephenson - Guided Sleep Meditation \",\n      \"channel_id\": \"UCqPYhcdFgrlUXiGmPRAej1w\",\n      \"avatar\": \"https://yt3.ggpht.com/a2O8Y3JoH7FvwpByzOokUFNiqM9QvG3hbXB6TTzP6omedDuA98bfxvuqN9RPDJkLWFcIYmgf=s240-c-k-c0x00ffffff-no-rj\",\n      \"channel_url\": \"https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w\"\n    }\n  },\n  {\n    \"title\": \"Fall Asleep In MINUTES! Sleep Talk-Down Guided Meditation Hypnosis for Sleeping\",\n    \"video_url\": \"https://www.youtube.com/watch?v=U6Ay9v7gK9w\",\n    \"duration_seconds\": 10801,\n    \"thumbnail\": \"https://i.ytimg.com/vi/U6Ay9v7gK9w/hqdefault.jpg\",\n    \"channel\": {\n      \"title\": \"Jason Stephenson - Guided Sleep Meditation \",\n      \"channel_id\": \"UCqPYhcdFgrlUXiGmPRAej1w\",\n      \"avatar\": \"https://yt3.ggpht.com/a2O8Y3JoH7FvwpByzOokUFNiqM9QvG3hbXB6TTzP6omedDuA98bfxvuqN9RPDJkLWFcIYmgf=s240-c-k-c0x00ffffff-no-rj\",\n      \"channel_url\": \"https://www.youtube.com/channel/UCqPYhcdFgrlUXiGmPRAej1w\"\n    }\n  },\n  {\n    \"title\": \"Fall Asleep in Under 20 Minutes - Guided Sleep, Insomnia\",\n    \"video_url\": \"https://www.youtube.com/watch?v=hkyKHk7s13s\",\n    \"duration_seconds\": 1214,\n    \"thumbnail\": \"https://i.ytimg.com/vi/hkyKHk7s13s/hqdefault.jpg\",\n    \"channel\": {\n      \"title\": \"The Honest Guys - Meditations - Relaxation\",\n      \"channel_id\": \"UC4jWo5kiyOCt4PnvF4jbaLg\",\n      \"avatar\": \"https://yt3.ggpht.com/ytc/AIdro_liTLVckd0TukldfcShQxNOSh58BOpaSFU2ygBpxqRbpt8=s240-c-k-c0x00ffffff-no-rj\",\n      \"channel_url\": \"https://www.youtube.com/channel/UC4jWo5kiyOCt4PnvF4jbaLg\"\n    }\n  },\n  {\n    \"title\": \"🎧 Guided Sleep Meditation - Pure Deep Relaxation\",\n    \"video_url\": \"https://www.youtube.com/watch?v=UGWR5Bu8A6Q\",\n    \"duration_seconds\": 1881,\n    \"thumbnail\": \"https://i.ytimg.com/vi/UGWR5Bu8A6Q/hqdefault.jpg\",\n    \"channel\": {\n      \"title\": \"The Honest Guys - Meditations - Relaxation\",\n      \"channel_id\": \"UC4jWo5kiyOCt4PnvF4jbaLg\",\n      \"avatar\": \"https://yt3.ggpht.com/ytc/AIdro_liTLVckd0TukldfcShQxNOSh58BOpaSFU2ygBpxqRbpt8=s240-c-k-c0x00ffffff-no-rj\",\n      \"channel_url\": \"https://www.youtube.com/channel/UC4jWo5kiyOCt4PnvF4jbaLg\"\n    }\n  }\n]",
+        "additional_kwargs": {
+          "refusal": null
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 1385,
+            "prompt_tokens": 5054,
+            "total_tokens": 6439,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": 0,
+              "audio_tokens": 0,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": 0
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cached_tokens": 0
+            }
+          },
+          "model_name": "gpt-4o-mini-2024-07-18",
+          "system_fingerprint": "fp_34a54ae93c",
+          "id": "chatcmpl-BlGVYPJFLlXVRo3aG99Z9osv7poa6",
+          "service_tier": "default",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "type": "ai",
+        "name": "youtube_assistant",
+        "id": "run--bf25ed90-cfcd-4a09-99f2-63f1a6f4a253-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 5054,
+          "output_tokens": 1385,
+          "total_tokens": 6439,
+          "input_token_details": {
+            "audio": 0,
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "audio": 0,
+            "reasoning": 0
+          }
+        }
+      }
+    ]
+  },
+  "reference_example_id": null,
+  "parent_run_id": null,
+  "tags": [],
+  "attachments": {},
+  "session_id": "4903534f-c08e-4584-be22-d27b53d7bedf",
+  "child_run_ids": [
+    "7ae430ad-99a5-4bfd-afd3-71bb4439d143",
+    "49d8e670-6eec-4ab0-972a-57d9e414109e",
+    "9196015a-98ab-4ef6-a40e-0d2a8889792e",
+    "e55367cf-41c2-4669-b4b6-79e1c23eb452",
+    "c6e858a9-aecf-4b19-b42b-ab510a11d29d",
+    "693d0e80-9aac-4bee-9dab-a8ef1466705d",
+    "ec79a8be-ab65-44c9-a37f-83b161cc7a4a",
+    "bd4a049c-1eb2-428a-8181-38470759d1cd",
+    "9c0a9732-78f0-47fe-9670-fadfb6ece3f9",
+    "4b31ddfd-2b27-46d8-86ae-6fbfe62954f9",
+    "9aa59ed1-fe21-4a36-8e66-a4cc5cf18502",
+    "d2c2580c-5d79-42ae-9f64-130493dd0adf",
+    "bf25ed90-cfcd-4a09-99f2-63f1a6f4a253",
+    "bbbddfdc-6d39-4ab4-8e86-cc3386df0a07"
+  ],
+  "child_runs": null,
+  "feedback_stats": null,
+  "app_path": "/o/8562cb79-4098-46cb-af08-f45db78c3ad5/projects/p/4903534f-c08e-4584-be22-d27b53d7bedf/r/1a47f9fd-80ef-4cf5-8fde-4bec30711cc9?trace_id=1a47f9fd-80ef-4cf5-8fde-4bec30711cc9&start_time=2025-06-22T15:02:48.823583",
+  "manifest_id": null,
+  "status": "success",
+  "prompt_tokens": 5509,
+  "completion_tokens": 1418,
+  "total_tokens": 6927,
+  "prompt_token_details": null,
+  "completion_token_details": null,
+  "first_token_time": null,
+  "total_cost": "0.00167715",
+  "prompt_cost": "0.00082635",
+  "completion_cost": "0.0008508",
+  "prompt_cost_details": null,
+  "completion_cost_details": null,
+  "parent_run_ids": [],
+  "trace_id": "1a47f9fd-80ef-4cf5-8fde-4bec30711cc9",
+  "dotted_order": "20250622T150248823583Z1a47f9fd-80ef-4cf5-8fde-4bec30711cc9",
+  "in_dataset": false,
+  "export_info": {
+    "exported_at": "2025-06-22T15:37:48.645594",
+    "run_id": "1a47f9fd-80ef-4cf5-8fde-4bec30711cc9",
+    "export_version": "1.0",
+    "include_metadata": true
+  }
+}

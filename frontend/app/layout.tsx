@@ -10,7 +10,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "MindFuel - AI Mental Health Companion",
   description: "Your AI-powered mental health companion for stress relief, meditation, and better sleep",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -20,6 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <link rel="icon" type="image/png" sizes="16x16" href="/og-image-square.png" />
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <AuthProvider>{children}</AuthProvider>

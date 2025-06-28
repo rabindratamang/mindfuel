@@ -5,7 +5,15 @@ class ApiClient {
   private refreshPromise: Promise<void> | null = null
 
   constructor() {
+    // Debug the environment variable
+    console.log("Environment check:", {
+      NODE_ENV: process.env.NODE_ENV,
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+      allEnvVars: Object.keys(process.env).filter((key) => key.startsWith("NEXT_PUBLIC_")),
+    })
+
     this.baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+    console.log("ApiClient baseURL:", this.baseURL)
   }
 
   private async getAuthHeaders(): Promise<Record<string, string>> {
@@ -50,7 +58,9 @@ class ApiClient {
   }
 
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`
+    const url = `${this.baseURL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`
+    console.log("Making request to:", url)
+
     const authHeaders = await this.getAuthHeaders()
 
     const config: RequestInit = {
@@ -61,6 +71,8 @@ class ApiClient {
         ...options.headers,
       },
     }
+
+    console.log("Request config:", { url, headers: config.headers })
 
     try {
       const response = await fetch(url, config)

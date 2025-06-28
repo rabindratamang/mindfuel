@@ -70,9 +70,9 @@ class MoodAnalyzerAgent:
                     "num_videos": number // exactly 6 videos
                 }},
                 "articles": {{
-                    "topics": ["string"], // psychology, self-help, mindfulness, etc relevant to the analysis.
-                    "difficulty": "string", // beginner, intermediate, advanced
+                    "keywords": ["string"], // psychology, self-help, mindfulness, etc relevant to the analysis.
                     "focus": ["string"] // coping strategies, understanding emotions, etc relevant to the analysis.
+                    "num_articles": number // exactly 6 articles
                 }},
                 "spotify": {{
                     "keywords": ["string"], // at least 5 search keywords for relevant playlists
@@ -200,9 +200,9 @@ class MoodAnalyzerAgent:
                     videos=content_data.get("youtube", {}).get("videos", None)
                 ),
                 articles=ArticlesRecommendation(
-                    topics=content_data.get("articles", {}).get("topics", []),
-                    difficulty=content_data.get("articles", {}).get("difficulty", "beginner"),
-                    focus=content_data.get("articles", {}).get("focus", [])
+                    keywords=content_data.get("articles", {}).get("keywords", []),
+                    focus=content_data.get("articles", {}).get("focus", []),
+                    articles=content_data.get("articles", {}).get("g_news", []).get("articles", [])
                 ),
                 spotify=SpotifyRecommendation(
                     genres=content_data.get("spotify", {}).get("genres", []),
@@ -281,6 +281,7 @@ class MoodAnalyzerAgent:
                 
                 youtube_rec = parsed_result.get("recommendations", {}).get("content", {}).get("youtube")
                 spotify_rec = parsed_result.get("recommendations", {}).get("content", {}).get("spotify")
+                articles_rec = parsed_result.get("recommendations", {}).get("content", {}).get("articles")
                 
                 tasks = []
                 if youtube_rec:
@@ -291,6 +292,10 @@ class MoodAnalyzerAgent:
                     spotify_agent = get_agent("content_generator_agent")
                     tasks.append(asyncio.to_thread(spotify_agent.run, "spotify", spotify_rec))
 
+                if articles_rec:
+                    articles_agent = get_agent("content_generator_agent")
+                    tasks.append(asyncio.to_thread(articles_agent.run, "articles", articles_rec))
+
                 if tasks:
                     recommendation_results = await asyncio.gather(*tasks)
                     
@@ -298,6 +303,8 @@ class MoodAnalyzerAgent:
                         parsed_result["recommendations"]["content"]["youtube"]["videos"] = recommendation_results.pop(0)
                     if spotify_rec:
                         parsed_result["recommendations"]["content"]["spotify"]["playlist"] = recommendation_results.pop(0)
+                    if articles_rec:
+                        parsed_result["recommendations"]["content"]["articles"]["g_news"] = recommendation_results.pop(0)
 
             except Exception as e:
                 print(f"Error getting content recommendations: {e}")

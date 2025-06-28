@@ -48,9 +48,9 @@ class YouTubeRecommendation(BaseModel):
     videos: Optional[List[Dict[str, Any]]] = []
 
 class ArticlesRecommendation(BaseModel):
-    topics: List[str]
-    difficulty: str
-    focus: List[str]
+    keywords: List[str] = Field(default=[])
+    focus: List[str] = Field(default=[])
+    articles: Optional[List[Dict[str, Any]]] = []
 
 
 class SpotifyPlaylist(BaseModel):
@@ -188,7 +188,7 @@ class MoodAnalysisRepository:
         doc = await (await self.collection).find_one({"_id": ObjectId(analysis_id)})
         return MoodAnalysis.from_mongo(doc) if doc else None
 
-    async def get_by_user_id(self, user_id: str, limit: int = 10) -> List[MoodAnalysis]:
+    async def get_by_user_id(self, user_id: str, limit: int = 100) -> List[MoodAnalysis]:
         cursor = (await self.collection).find({"userId": ObjectId(user_id)}).sort("createdAt", -1).limit(limit)
         docs = await cursor.to_list(length=limit)
         return [MoodAnalysis.from_mongo(doc) for doc in docs]
@@ -210,7 +210,7 @@ class MoodAnalysisRepository:
         docs = await cursor.to_list(length=limit)
         return [MoodAnalysis.from_mongo(doc) for doc in docs]
 
-    async def get_analyses_by_mood(self, mood: str, limit: int = 10) -> List[MoodAnalysis]:
+    async def get_analyses_by_mood(self, mood: str, limit: int = 100) -> List[MoodAnalysis]:
         cursor = (await self.collection).find({"analysis.primaryMood": mood}).sort("createdAt", -1).limit(limit)
         docs = await cursor.to_list(length=limit)
         return [MoodAnalysis.from_mongo(doc) for doc in docs]

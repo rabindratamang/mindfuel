@@ -5,6 +5,7 @@ from langchain_core.tools import Tool
 from langchain_core.messages import HumanMessage
 from tools.youtube_tools import search_youtube_videos
 from tools.spotify_tools import search_spotify_playlists
+from tools.g_news_tools import search_g_news_by_keyword
 from config.setting import settings
 import json
 
@@ -31,13 +32,13 @@ class ContentGeneratorAgent:
         
         self.agent = create_tool_calling_agent(
             llm=self.model,
-            tools=[search_youtube_videos, search_spotify_playlists],
+            tools=[search_youtube_videos, search_spotify_playlists, search_g_news_by_keyword],
             prompt=self.prompt
         )
         
         self.agent_executor = AgentExecutor(
             agent=self.agent,
-            tools=[search_youtube_videos, search_spotify_playlists],
+            tools=[search_youtube_videos, search_spotify_playlists, search_g_news_by_keyword],
             name="content_generator_agent",
             verbose=False,
             max_iterations=1,
@@ -86,7 +87,7 @@ class ContentGeneratorAgent:
                 f"- Mood: {mood}\n"
                 f"- Duration: {duration} (e.g., 0-10min=short, 10-30min=medium, 30min+=long)\n\n"
                 "Prepare a comprehensive search query based on all the above fields for the search_youtube_videos tool"
-                "IMPORTANT: Do not use the search_spotify_playlists tool for this field, only use the search_youtube_videos tool strictly for this field, use single tool call for this field"
+                "IMPORTANT: Do not use the search_spotify_playlists or search_news_by_keyword tool for this field, only use the search_youtube_videos tool strictly for this field, use single tool call for this field"
                 "Only return array of JSON with: title, video_url, duration_seconds, thumbnail, and channel details. even if there is only one video"
                 "Do not include any commentary or explanation outside the JSON array. Only return valid JSON array. Example do not wrap it in ```json or any markdown formatting"
             )
@@ -107,8 +108,20 @@ class ContentGeneratorAgent:
                 f"- Valence: {valence}\n"
                 f"- Duration: {duration} (e.g., 0-10min=short, 10-30min=medium, 30min+=long)\n\n"
                 "Generate a comprehensive search query based on all the above fields for the search_spotify_playlists tool \n "
-                "IMPORTANT: Do not use the search_youtube_videos tool for this field, only use the search_spotify_playlists tool strictly for this field, use single tool call for this field"
+                "IMPORTANT: Do not use the search_youtube_videos or search_news_by_keyword tool for this field, only use the search_spotify_playlists tool strictly for this field, use single tool call for this field"
                 "Only return array of JSON with: name, description, image, link, owner, and track count. even if there is only one playlist"
+            )
+        elif content_type == "articles":
+            num_articles = recommendation.get("num_articles", 1)
+            keywords = recommendation.get("keywords", [])
+            focus = recommendation.get("focus", [])
+            user_input = (
+                f"Find {num_articles} news articles that includes the following:\n"
+                f"- Keywords: {', '.join(keywords)}\n"
+                f"- Focus: {', '.join(focus)}\n"
+                "Generate a comprehensive search query based on all the above fields for the search_news_by_keyword tool \n "
+                "IMPORTANT: Do not use the search_youtube_videos or search_spotify_playlists tool for this field, only use the search_news_by_keyword tool strictly for this field, use single tool call for this field"
+                "Only return array of JSON with: title, snippet, news_url, thumbnail, publisher, timestamp, and published_time. even if there is only one article"
             )
         else:
             raise ValueError(f"Invalid content type: {content_type}")

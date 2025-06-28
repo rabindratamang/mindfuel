@@ -1,10 +1,9 @@
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage
-
 from tools.meditation_tools import rag_tool
 from config.setting import settings
-
+import asyncio
 class MeditationAgent:
     def __init__(self):
         self.openai_api_key = settings.OPENAI_API_KEY
@@ -33,8 +32,8 @@ class MeditationAgent:
             name="meditation_agent"
         )
 
-    def run(self, user_input, user_id=None, context=None):
-        response = self.agent.invoke({
-            "messages": [HumanMessage(content=user_input)]
+    async def run(self,user_input, user_id, context, user_persona):
+        response = await asyncio.to_thread(self.agent.invoke, {
+            "messages": [HumanMessage(content="generate a meditation plan for me")]
         }, config={"recursion_limit": 50})
         return response["messages"][-1].content

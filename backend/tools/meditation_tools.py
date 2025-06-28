@@ -1,12 +1,12 @@
-from langchain.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma as ch
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
-from langchain.chat_models import ChatOpenAI
-from langchain.tools import tool
+from langchain_openai import ChatOpenAI
+from langchain_community.tools import tool
 
 # Load PDFs
 pdf_files = ["pdfs/27_Meditation_Techniques.pdf", "pdfs/how-to-meditate.pdf"]

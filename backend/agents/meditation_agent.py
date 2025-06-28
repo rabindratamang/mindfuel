@@ -3,7 +3,6 @@ from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage
 
 from tools.meditation_tools import rag_tool
-from tools.email_tools import guided_meditation_tool2
 from config.setting import settings
 
 class MeditationAgent:

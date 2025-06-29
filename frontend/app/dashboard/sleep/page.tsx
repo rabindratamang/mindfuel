@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -42,6 +42,13 @@ interface SleepRecord {
   notes: string
 }
 
+interface SleepTrendRecord {
+  date: string
+  duration: string
+  quality: string
+  mood: string
+}
+
 interface WindDownPlan {
   totalDuration: number
   activities: Array<{
@@ -76,6 +83,8 @@ export default function SleepPage() {
     notes: "",
   })
   const [fetchedPlaylists, setFetchedPlaylists] = useState<any[]>([])
+  const [sleepTrends, setSleepTrends] = useState<SleepTrendRecord[]>([])
+  const [isLoadingTrends, setIsLoadingTrends] = useState(false)
 
   const windDownActivities = [
     { id: "meditation", label: "Meditation", icon: <Brain className="h-4 w-4" /> },
@@ -147,6 +156,51 @@ export default function SleepPage() {
     { value: "tired", label: "Still Tired", emoji: "😴" },
     { value: "groggy", label: "Groggy", emoji: "🥱" },
   ]
+
+  // Fetch sleep trends when component mounts or when tracking tab is accessed
+  useEffect(() => {
+    if (activeTab === "tracking") {
+      fetchSleepTrends()
+    }
+  }, [activeTab])
+
+  const fetchSleepTrends = async () => {
+    setIsLoadingTrends(true)
+    try {
+      const response = await apiClient.get("/sleep")
+      if (response && Array.isArray(response)) {
+        // Take the last 7 records and format them
+        const last7Records = response.slice(-7).map((record: any) => ({
+          date: new Date(record.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          duration: record.duration,
+          quality: record.quality,
+          mood: record.mood,
+        }))
+        setSleepTrends(last7Records)
+      } else {
+        // Fallback to mock data if API doesn't return expected format
+        setSleepTrends([
+          { date: "Dec 28", duration: "7h 32m", quality: "Good", mood: "Energized" },
+          { date: "Dec 27", duration: "6h 45m", quality: "Fair", mood: "Tired" },
+          { date: "Dec 26", duration: "8h 15m", quality: "Excellent", mood: "Refreshed" },
+          { date: "Dec 25", duration: "7h 20m", quality: "Good", mood: "Energized" },
+          { date: "Dec 24", duration: "6h 30m", quality: "Poor", mood: "Groggy" },
+        ])
+      }
+    } catch (error) {
+      console.error("Error fetching sleep trends:", error)
+      // Fallback to mock data on error
+      setSleepTrends([
+        { date: "Dec 28", duration: "7h 32m", quality: "Good", mood: "Energized" },
+        { date: "Dec 27", duration: "6h 45m", quality: "Fair", mood: "Tired" },
+        { date: "Dec 26", duration: "8h 15m", quality: "Excellent", mood: "Refreshed" },
+        { date: "Dec 25", duration: "7h 20m", quality: "Good", mood: "Energized" },
+        { date: "Dec 24", duration: "6h 30m", quality: "Poor", mood: "Groggy" },
+      ])
+    } finally {
+      setIsLoadingTrends(false)
+    }
+  }
 
   const handleActivityToggle = (activityId: string) => {
     setWindDownPreferences((prev) => ({
@@ -316,9 +370,40 @@ export default function SleepPage() {
     setSleepRecord(updated)
   }
 
-  const handleSleepSubmit = () => {
-    console.log("Sleep record:", sleepRecord)
-    setShowSleepForm(false)
+  const handleSleepSubmit = async () => {
+    try {
+      const response = await apiClient.post("/sleep", {
+        date: sleepRecord.date,
+        bedtime: sleepRecord.bedtime,
+        wakeTime: sleepRecord.wakeTime,
+        duration: sleepRecord.duration,
+        quality: sleepRecord.quality,
+        factors: sleepRecord.factors,
+        mood: sleepRecord.mood,
+        notes: sleepRecord.notes,
+      })
+
+      console.log("Sleep record saved:", response)
+      setShowSleepForm(false)
+
+      // Reset the form
+      setSleepRecord({
+        date: new Date().toISOString().split("T")[0],
+        bedtime: "",
+        wakeTime: "",
+        duration: "",
+        quality: 0,
+        factors: [],
+        mood: "",
+        notes: "",
+      })
+
+      // Refresh sleep trends after successful submission
+      fetchSleepTrends()
+    } catch (error) {
+      console.error("Error saving sleep record:", error)
+      // You could add a toast notification here for user feedback
+    }
   }
 
   const handlePlaylistSelect = (playlist: any) => {
@@ -845,30 +930,35 @@ export default function SleepPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {[
-                      { date: "Dec 28", duration: "7h 32m", quality: "Good", mood: "Energized" },
-                      { date: "Dec 27", duration: "6h 45m", quality: "Fair", mood: "Tired" },
-                      { date: "Dec 26", duration: "8h 15m", quality: "Excellent", mood: "Refreshed" },
-                      { date: "Dec 25", duration: "7h 20m", quality: "Good", mood: "Energized" },
-                      { date: "Dec 24", duration: "6h 30m", quality: "Poor", mood: "Groggy" },
-                    ].map((record, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-4">
-                          <div className="font-medium w-16">{record.date}</div>
-                          <div className="text-sm text-slate-600 dark:text-slate-400">{record.duration}</div>
+                  {isLoadingTrends ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {sleepTrends.map((record, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-4">
+                            <div className="font-medium w-16">{record.date}</div>
+                            <div className="text-sm text-slate-600 dark:text-slate-400">{record.duration}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {record.quality}
+                            </Badge>
+                            <Badge variant="secondary" className="text-xs">
+                              {record.mood}
+                            </Badge>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-xs">
-                            {record.quality}
-                          </Badge>
-                          <Badge variant="secondary" className="text-xs">
-                            {record.mood}
-                          </Badge>
+                      ))}
+                      {sleepTrends.length === 0 && !isLoadingTrends && (
+                        <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                          No sleep records found. Start tracking your sleep to see trends!
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

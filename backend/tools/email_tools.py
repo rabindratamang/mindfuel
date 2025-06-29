@@ -15,7 +15,7 @@ def send_email_via_sendgrid(
     content_type: str = "text/plain"
 ) -> dict:
     """
-    Sends an email using the SendGrid API.
+    Sends an email.
 
     Args:
         sender_email (str): The sender's verified email address.

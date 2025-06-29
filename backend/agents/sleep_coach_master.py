@@ -242,66 +242,8 @@ class SleepCoachAgent:
             print(f"Error creating SleepAnalysis model: {e}")
             raise
 
-    async def run(self, user_input: str, user_id: str = None, context: dict = None, save_to_db: bool = True) -> Dict[str, Any]:
-        try:
-            prompt = (
-                f"""
-                CONTEXT:
-                    - MindFuel is a mental wellness app that helps users track sleep, get personalized content recommendations, and improve sleep health
-                    - Users share their sleep patterns, issues, and current state
-                    - Your analysis will be used to provide personalized Spotify playlists and sleep recommendations
-                    - Be empathetic, supportive, and professional in your analysis
 
-                USER INPUT:
-                {user_input}
-                """
-            )
-
-            response = await asyncio.to_thread(self.agent.invoke, {
-                "input": prompt
-            })
-    
-            content = response.get("output", "")
-
-            if isinstance(content, dict):
-                parsed_result = content  # already a dict
-            elif isinstance(content, str):
-                try:
-                    parsed_result = json.loads(content)
-                except json.JSONDecodeError as e:
-                    return {"error": f"Failed to parse JSON: {str(e)}"}
-            else:
-                return {"error": "Unknown content format from sleep coach."}
-
-            db_info = {}
-            full_analysis_model = self._create_sleep_analysis_model(parsed_result, user_id, user_input, context)
-
-            if save_to_db and user_id:
-                try:
-                    await init_database()
-                    
-                    full_repo = SleepAnalysisRepository()
-                    full_analysis_id = await full_repo.create(full_analysis_model)
-                    
-                    db_info = {
-                        "full_analysis_id": full_analysis_id,
-                        "saved": True
-                    }
-                except Exception as e:
-                    print(f"Error saving to database: {e}")
-                    db_info = {"saved": False, "error": str(e)}
-    
-            return {
-                "analysis": parsed_result,
-                "frontend_format": full_analysis_model.from_mongo(full_analysis_model.to_mongo()),
-                "database": db_info
-            }
-
-        except Exception as e:
-            print(f"Run error: {e}")
-            return {"error": str(e)}
-
-    async def run3(self, user_input: str, user_id: str = None, context: str = None, save_to_db: bool = True) -> Dict[str, Any]:
+    async def run(self, user_input: str, user_id: str = None, context: str = None, user_persona: str = None, save_to_db: bool = True) -> Dict[str, Any]:
         try:
             context_str = """
                 - MindFuel is a mental wellness app that helps users track sleep, get personalized content recommendations, and improve sleep health
@@ -363,23 +305,6 @@ class SleepCoachAgent:
 
         except Exception as e:
             print(f"Run error: {e}")
-            return {"error": str(e)}
-
-    def run2(self, user_input, user_id=None, context=None):
-        try:
-            context_str = """
-                - MindFuel is a mental wellness app that helps users track sleep, get personalized content recommendations, and improve sleep health
-                - Users share their sleep patterns, issues, and current state
-                - Your analysis will be used to provide personalized Spotify playlists and sleep recommendations
-                - Be empathetic, supportive, and professional in your analysis
-            """
-            prompt_vars = {
-                "context": context_str,
-                "input": user_input,
-            }
-            return self.chain.invoke(prompt_vars) 
-        except Exception as e:
-            print(e)
             return {"error": str(e)}
 
     async def get_user_analyses(self, user_id: str, limit: int = 10, simple: bool = True) -> Dict[str, Any]:

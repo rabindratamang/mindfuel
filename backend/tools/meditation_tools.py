@@ -8,37 +8,37 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_openai import ChatOpenAI
 from langchain_community.tools import tool
 
-# Load PDFs
-pdf_files = ["pdfs/27_Meditation_Techniques.pdf", "pdfs/how-to-meditate.pdf"]
-all_documents = []
-for pdf_file in pdf_files:
-    loader = PyPDFLoader(pdf_file)
-    docs = loader.load()
-    all_documents.extend(docs)
-documents = all_documents
-print(f"Loaded {len(documents)} documents from {len(pdf_files)} PDFs.")
+# # Load PDFs
+# pdf_files = ["pdfs/27_Meditation_Techniques.pdf", "pdfs/how-to-meditate.pdf"]
+# all_documents = []
+# for pdf_file in pdf_files:
+#     loader = PyPDFLoader(pdf_file)
+#     docs = loader.load()
+#     all_documents.extend(docs)
+# documents = all_documents
+# print(f"Loaded {len(documents)} documents from {len(pdf_files)} PDFs.")
 
-# Split text
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-texts = text_splitter.split_documents(documents)
-print(f"Split into {len(texts)} chunks.")
+# # Split text
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+# texts = text_splitter.split_documents(documents)
+# print(f"Split into {len(texts)} chunks.")
 
-# Embeddings
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
+# # Embeddings
+# embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
 
-# Create & persist vectorstore
-persist_directory = "chroma_db"
-db = ch.from_documents(
-    documents=texts,
-    embedding=embeddings,
-    persist_directory=persist_directory
-)
+# # Create & persist vectorstore
+# persist_directory = "chroma_db"
+# db = ch.from_documents(
+#     documents=texts,
+#     embedding=embeddings,
+#     persist_directory=persist_directory
+# )
 
 # Create retriever
-retriever = db.as_retriever(
-    search_type="similarity",
-    search_kwargs={"k": 4}
-)
+# retriever = db.as_retriever(
+#     search_type="similarity",
+#     search_kwargs={"k": 4}
+# )
 
 # Prompt Template
 custom_prompt_template = """
@@ -52,16 +52,16 @@ Answer:
 prompt = ChatPromptTemplate.from_template(custom_prompt_template)
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
-# RAG Chain
-rag_chain = (
-    {
-        "context": RunnableLambda(lambda x: retriever.invoke(x["question"])),
-        "question": RunnablePassthrough(),
-    }
-    | prompt
-    | llm
-    | StrOutputParser()
-)
+# # RAG Chain
+# rag_chain = (
+#     {
+#         "context": RunnableLambda(lambda x: retriever.invoke(x["question"])),
+#         "question": RunnablePassthrough(),
+#     }
+#     | prompt
+#     | llm
+#     | StrOutputParser()
+# )
 
 # Tool definition
 @tool

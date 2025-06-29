@@ -11,7 +11,6 @@ router = APIRouter()
 @router.post("/{agent_name}", response_model=AgentResponse)
 async def run_agent(agent_name: str, req: AgentRequest, current_user_info: dict = Depends(get_current_user)):
 
-    # return JSONResponse(content=jsonable_encoder())
     agent = get_agent(agent_name)
     if not agent:
         raise HTTPException(status_code=404, detail="Agent not found")

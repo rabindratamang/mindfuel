@@ -3,7 +3,9 @@ import requests
 from langchain_core.tools import tool
 from config.setting import settings
 from typing import List
-
+import csv
+import io
+import re
 
 def get_spotify_token(client_id: str, client_secret: str) -> str:
     """
@@ -81,3 +83,62 @@ def search_spotify_playlists(query: str, num_playlists: int = 1) -> dict:
     except Exception as e:
         return {"error": str(e)}
 
+
+@tool()
+def search_spotify_playlists_csv(query: str, num_playlists: int = 1) -> dict:
+    """
+    Search for Spotify playlists using a keyword (e.g., "sleep", "meditation").
+
+    Args:
+        query (str): The search query.
+        num_playlists (int): The number of playlists to return (default: 6).
+
+    Returns:
+        csv: A csv containing playlist details.
+
+        example:
+        "name", "description", "url", "image", "owner_name", "tracks_url", "tracks_total"
+    """
+    client_id = settings.SPOTIFY_CLIENT_ID
+    client_secret = settings.SPOTIFY_CLIENT_SECRET
+
+    try:
+        token = get_spotify_token(client_id, client_secret)
+        headers = {
+            'Authorization': f'Bearer {token}'
+        }
+        params = {
+            'q': query,
+            'type': 'playlist',
+            'limit': num_playlists
+        }
+        url = 'https://api.spotify.com/v1/search'
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+
+        playlists = response.json().get('playlists', {}).get('items', [])
+
+        if not playlists:
+            return "message\nNo playlists found for your query."
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow([
+            "name", "description", "url", "image", "owner_name", "tracks_url", "tracks_total"
+        ])
+        for pl in playlists:
+            if pl is None:
+                continue
+            writer.writerow([
+                pl.get('name', ''),
+                re.sub(r'[^A-Za-z0-9 ]+', '', pl.get('description', '')),
+                pl.get('external_urls', {}).get('spotify', ''),
+                pl.get('images', [{}])[0].get('url', ''),
+                pl.get('owner', {}).get('display_name', ''),
+                pl.get('tracks', {}).get('href', ''),
+                pl.get('tracks', {}).get('total', '')
+            ])
+        return output.getvalue()
+
+    except Exception as e:
+        return f"error\n{str(e)}"

@@ -21,6 +21,7 @@ class UserProfileUpdate(BaseModel):
     firstName: Optional[str] = None
     lastName: Optional[str] = None
     email: Optional[EmailStr] = None
+    emergencyEmail: Optional[str] = None
     profile: Optional[ProfileUpdate] = None
 
 class PreferencesUpdate(BaseModel):

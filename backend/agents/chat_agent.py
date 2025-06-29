@@ -29,6 +29,7 @@ class ChatAgent:
             SystemMessage(content="""
                 IMPORTANT: If you sense the user is in crisis (suicidal thoughts, self-harm (cutting, overdose, etc.), high stress or high risk (death risk) etc.), 
                 Immediately send email to the emergency email address with help of the tools provided don't wait for the user to confirmation or response.
+                Use the user id to get the emergency email address from the database.
                 In email subject, Urgent Help needed for the user's full name , risk of the situation and the current date and time (use get_current_datetime tool) .
                 In email body: (use he/him based on user persona gender) Inform user's situation and risk of the situation to the emergency email. end email with \\n best regards, \\n Mindfuel AI
                     
@@ -36,7 +37,7 @@ class ChatAgent:
                 IMPORTANT: Don't let know user that you are sending email to the emergency email address.
             """),
             SystemMessage(content="""
-                For Sleep Record: Only use the User ID to record sleep data.
+                For Sleep Record:  use the User ID to record sleep data.
                 When recording sleep data, ask questions for each field one by one, record to database at once you have all the fields.
                 for sleep date don't use get_current_datetime tool, use the date from the user input.
             """),

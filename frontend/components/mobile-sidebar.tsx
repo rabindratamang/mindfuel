@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Brain, Home, BarChart, Moon, Sparkles, Settings, Bell, User, LogOut, X, Smile, MessageCircle } from "lucide-react"
+import { Brain, Home, Moon, Sparkles, Settings, Bell, User, LogOut, X, Smile, MessageCircle, Clock } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatedIcon } from "@/components/animated-icon"
@@ -100,10 +100,10 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                   onClick={onClose}
                 />
                 <MobileSidebarLink
-                  href="/dashboard/notifications"
-                  icon={Bell}
-                  label="Notifications"
-                  isActive={isActive("/dashboard/notifications")}
+                  href="/dashboard/reminder"
+                  icon={Clock}
+                  label="Reminders"
+                  isActive={isActive("/dashboard/reminder")}
                   onClick={onClose}
                 />
                 <MobileSidebarLink
@@ -111,13 +111,6 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                   icon={User}
                   label="Profile"
                   isActive={isActive("/dashboard/profile")}
-                  onClick={onClose}
-                />
-                <MobileSidebarLink
-                  href="/dashboard/settings"
-                  icon={Settings}
-                  label="Settings"
-                  isActive={isActive("/dashboard/settings")}
                   onClick={onClose}
                 />
               </nav>

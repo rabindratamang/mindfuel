@@ -34,6 +34,6 @@ class MeditationAgent:
 
     async def run(self,user_input, user_id, context, user_persona):
         response = await asyncio.to_thread(self.agent.invoke, {
-            "messages": [HumanMessage(content="generate a meditation plan for me")]
+            "messages": [HumanMessage(content="10 min meditation")]
         }, config={"recursion_limit": 50})
         return response["messages"][-1].content

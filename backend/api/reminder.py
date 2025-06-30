@@ -2,13 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from models.reminder import Reminder, ReminderRepository
 from core.security import get_current_user
 from fastapi.encoders import jsonable_encoder
-
+from datetime import datetime, timezone
 router = APIRouter()
 
 @router.post("/", response_model=dict)
 async def create_reminder(reminder: dict, current_user_info=Depends(get_current_user)):
     repo = ReminderRepository()
     reminder["userId"] = current_user_info["user"].id
+    reminder["createdAt"] = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()
+    reminder["updatedAt"] = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()
     inserted_id = await repo.create(reminder)
     reminder_created = await repo.get_by_id(inserted_id)
     return jsonable_encoder(reminder_created)

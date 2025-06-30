@@ -7,12 +7,18 @@ from contextlib import asynccontextmanager
 from api import auth, agent, users, chat, mood, sleep, reminder
 from database.mongo_client import init_database, close_database
 from fastapi.middleware.cors import CORSMiddleware
+from utils.reminder_email_task import reminder_email_task
+import asyncio
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_database()
-    yield
+    task = asyncio.create_task(reminder_email_task())
+    try:
+        yield
+    finally:
+        task.cancel()
     await close_database()
 
 app = FastAPI(lifespan=lifespan)

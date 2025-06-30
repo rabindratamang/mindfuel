@@ -1,5 +1,5 @@
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from bson import ObjectId
 from database.mongo_client import get_database
@@ -14,6 +14,7 @@ class Reminder(BaseModel):
     repeatInterval: int = 1
     isActive: bool = True
     createdAt: datetime = Field(default_factory=datetime.utcnow)
+    updatedAt: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
         validate_by_name = True

@@ -427,8 +427,10 @@ export default function MeditationPage() {
   }
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
+    // Ensure we're working with integers to avoid floating point display issues
+    const totalSeconds = Math.floor(seconds)
+    const mins = Math.floor(totalSeconds / 60)
+    const secs = totalSeconds % 60
     return `${mins}:${secs.toString().padStart(2, "0")}`
   }
 
@@ -617,7 +619,7 @@ export default function MeditationPage() {
                   // Generate AI content based on simplified survey data
                   try {
                     const response = await apiClient.post("/agent/meditation", {
-                      input: "Generate a meditation session based on the user's context and current time.",
+                      input: "generate meditation content",
                       context: {
                         ...userPreferences,
                         time_of_day: new Date().getHours(),
@@ -625,11 +627,73 @@ export default function MeditationPage() {
                       },
                     })
 
-                    // Set the generated content
-                    setAiMeditations(response.meditations || [])
-                    setYoutubeMeditations(response.youtubeContent || [])
-                    setSpotifyMeditations(response.spotifyContent || [])
-                    setAudioMeditations(response.audioContent || [])
+                    // Format the API response to match our data structures
+                    if (response) {
+                      // Set AI meditation from the main response
+                      const aiMeditation: AIGeneratedMeditation = {
+                        id: response.id || `ai-${Date.now()}`,
+                        title: response.title || "AI Generated Meditation",
+                        description: response.description || "Personalized meditation session",
+                        steps: response.steps || [],
+                        totalDuration: response.totalDuration || 300,
+                        category: response.category || "meditation",
+                        moodBased: response.moodBased || true,
+                        difficulty: response.difficulty || "beginner",
+                        generatedAt: response.generatedAt || new Date().toISOString(),
+                      }
+                      setAiMeditations([aiMeditation])
+
+                      // Format YouTube videos
+                      const youtubeContent: YouTubeMeditation[] = (response.youtube_videos || []).map((video: any) => ({
+                        id: video.id || video.videoId,
+                        title: video.title,
+                        description: video.description,
+                        videoId: video.videoId,
+                        channelName: video.channelName,
+                        channelAvatar: video.channelAvatar,
+                        thumbnail: video.thumbnail,
+                        duration: video.duration,
+                        category: video.category,
+                        rating: video.rating,
+                        viewCount: video.viewCount,
+                      }))
+                      setYoutubeMeditations(youtubeContent)
+
+                      // Format premium audio content
+                      const audioContent: AudioMeditation[] = (response.premiumAudios || []).map((audio: any) => ({
+                        id: audio.id,
+                        title: audio.title,
+                        description: audio.description,
+                        audioUrl: audio.audioUrl,
+                        duration: audio.duration,
+                        category: audio.category,
+                        instructor: "AI Generated",
+                        backgroundMusic: "ambient",
+                        downloadable: false,
+                        fileSize: "N/A",
+                        quality: "high" as const,
+                      }))
+                      setAudioMeditations(audioContent)
+
+                      // Keep existing Spotify meditations as fallback
+                      setSpotifyMeditations([
+                        {
+                          id: "sp-1",
+                          title: "Deep Sleep Meditation",
+                          description: "Relaxing sounds and guided meditation for better sleep",
+                          uri: "spotify:playlist:37i9dQZF1DWZqd5JICZI0u",
+                          artist: "Calm",
+                          image: "/placeholder.svg?height=300&width=300",
+                          duration: 1800,
+                          category: "sleep",
+                          rating: 4.6,
+                          trackCount: 12,
+                        },
+                      ])
+                    } else {
+                      // Fallback to mock data if response is empty
+                      loadMockData()
+                    }
                   } catch (error) {
                     console.error("Failed to generate content:", error)
                     loadMockData()
@@ -897,8 +961,8 @@ export default function MeditationPage() {
       {/* Audio element for audio meditations */}
       <audio
         ref={audioRef}
-        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onTimeUpdate={(e) => setCurrentTime(Math.floor(e.currentTarget.currentTime))}
+        onLoadedMetadata={(e) => setDuration(Math.floor(e.currentTarget.duration))}
         onEnded={() => setIsPlaying(false)}
         muted={isMuted}
         volume={volume[0] / 100}
@@ -1077,6 +1141,13 @@ function YouTubeMeditationCard({
   meditation: YouTubeMeditation
   onPlay: () => void
 }) {
+  const formatTime = (seconds: number) => {
+    const totalSeconds = Math.floor(seconds)
+    const mins = Math.floor(totalSeconds / 60)
+    const secs = totalSeconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
+
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
       <Card className="group hover:shadow-lg transition-all cursor-pointer overflow-hidden border-red-200 dark:border-red-800">
@@ -1143,6 +1214,13 @@ function AudioMeditationCard({
   meditation: AudioMeditation
   onPlay: () => void
 }) {
+  const formatTime = (seconds: number) => {
+    const totalSeconds = Math.floor(seconds)
+    const mins = Math.floor(totalSeconds / 60)
+    const secs = totalSeconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
+
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
       <Card className="group hover:shadow-lg transition-all cursor-pointer overflow-hidden border-emerald-200 dark:border-emerald-800">
@@ -1188,7 +1266,7 @@ function AudioMeditationCard({
               )}
             </div>
             <Button onClick={onPlay} className="w-full bg-emerald-500 hover:bg-emerald-600">
-              <Play className="w-4 h-4 mr-2" />
+              <Play className="w-4 h-4 mr-2" />z
               Play Audio
             </Button>
           </div>
@@ -1196,10 +1274,4 @@ function AudioMeditationCard({
       </Card>
     </motion.div>
   )
-}
-
-function formatTime(seconds: number) {
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
-  return `${mins}:${secs.toString().padStart(2, "0")}`
 }

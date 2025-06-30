@@ -72,6 +72,7 @@ interface Goal {
 interface UserProfile {
   id: string
   email: string
+  emergencyEmail: string | null
   firstName: string
   lastName: string
   profile: Profile
@@ -96,6 +97,7 @@ export default function ProfilePage() {
     firstName: "",
     lastName: "",
     email: "",
+    emergencyEmail: null as string | null, // Add this line
     profile: {
       avatar: null as string | null,
       bio: null as string | null,
@@ -143,6 +145,7 @@ export default function ProfilePage() {
         firstName: profile.firstName,
         lastName: profile.lastName,
         email: profile.email,
+        emergencyEmail: profile.emergencyEmail, // Add this line
         profile: {
           ...profile.profile,
           // Convert ISO date to YYYY-MM-DD format for date input
@@ -166,6 +169,7 @@ export default function ProfilePage() {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
+        emergencyEmail: formData.emergencyEmail,
         profile: {
           ...formData.profile,
           // Convert date back to ISO format for backend
@@ -399,6 +403,22 @@ export default function ProfilePage() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="emergencyEmail">Emergency Contact Email</Label>
+                    <Input
+                      id="emergencyEmail"
+                      type="email"
+                      value={formData.emergencyEmail || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          emergencyEmail: e.target.value || null,
+                          profile: { ...formData.profile },
+                        })
+                      }
+                      placeholder="Enter emergency contact email"
                     />
                   </div>
                   <div className="space-y-2">

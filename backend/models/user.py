@@ -74,6 +74,7 @@ class UserInDB(UserBase):
     preferences: Preferences = Field(default_factory=Preferences)
     goals: List[Goal] = Field(default_factory=list)
     isOnboardComplete: bool = False
+    emergencyEmail: str = Field(default="rabindratamangstudy@gmail.com")
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
 
@@ -111,6 +112,7 @@ class User(UserBase):
     id: str
     firstName: str
     lastName: str
+    emergencyEmail: Optional[str] = Field(default="rabindratamangstudy@gmail.com")
     profile: Profile = Field(default_factory=Profile)
     stats: Stats = Field(default_factory=Stats)
     achievements: List[Achievement] = Field(default_factory=list)
